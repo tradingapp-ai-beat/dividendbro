@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "546409712378",
+    "project_id": "dividendbeat",
+    "storage_bucket": "dividendbeat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:546409712378:android:74ab0f8a229f9ceaad1743",
+        "android_client_info": {
+          "package_name": "com.example.dividendbro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDU4T8qnevhGPd1qCpGP4qeq33Zcfu25Y8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,41 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "dividendbeat",
+          "appId": "1:546409712378:android:74ab0f8a229f9ceaad1743",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "dividendbeat",
+          "configurations": {
+            "android": "1:546409712378:android:74ab0f8a229f9ceaad1743",
+            "ios": "1:546409712378:ios:ac19a05e2f6c04d9ad1743",
+            "macos": "1:546409712378:ios:ac19a05e2f6c04d9ad1743",
+            "web": "1:546409712378:web:71cf517c293ed7d0ad1743",
+            "windows": "1:546409712378:web:5b850f1cdad88604ad1743"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
+    }
+  ]
+}
