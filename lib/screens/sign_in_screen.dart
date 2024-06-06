@@ -18,16 +18,18 @@ class _SignInScreenState extends State<SignInScreen> {
     String email = _emailController.text;
     String password = _passwordController.text;
 
-    bool success = await Provider.of<UserProvider>(context, listen: false).signIn(email, password);
+    bool success = await Provider.of<UserProvider>(context, listen: false)
+        .signIn(email, password);
     if (success) {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => ImageSelectionScreen(
-            subscribedTimeFrames: userProvider.user.timeFrames ?? [],
-            name: userProvider.user.name ?? '',
-          ),
+          builder: (context) =>
+              ImageSelectionScreen(
+                subscribedTimeFrames: userProvider.user.timeFrames ?? [],
+                name: userProvider.user.name ?? '',
+              ),
         ),
       );
     } else {
@@ -37,17 +39,20 @@ class _SignInScreenState extends State<SignInScreen> {
 
   Future<void> _sendPasswordResetEmail(String email) async {
     try {
-      HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('sendPasswordResetEmail');
+      HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
+          'sendPasswordResetEmail');
       final response = await callable.call(<String, dynamic>{
         'email': email,
       });
       if (response.data['success']) {
         _showSuccessDialog("Password reset email sent to $email");
       } else {
-        _showErrorDialog("Failed to send password reset email: ${response.data['error']}");
+        _showErrorDialog(
+            "Failed to send password reset email: ${response.data['error']}");
       }
     } catch (e) {
-      _showErrorDialog("An error occurred while sending the password reset email.");
+      _showErrorDialog(
+          "An error occurred while sending the password reset email.");
     }
   }
 
@@ -79,7 +84,8 @@ class _SignInScreenState extends State<SignInScreen> {
               child: Text("OK"),
               onPressed: () async {
                 Navigator.of(context).pop();
-                await _sendPasswordResetEmail(_forgotPasswordEmailController.text);
+                await _sendPasswordResetEmail(
+                    _forgotPasswordEmailController.text);
               },
             ),
           ],
@@ -139,6 +145,13 @@ class _SignInScreenState extends State<SignInScreen> {
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
+            Image.asset(
+              'assets/logo.png', // Path to your logo.png asset
+              height: 100, // Adjust the height as needed
+              width: 100, // Adjust the width as needed
+            ),
+            SizedBox(height: 20),
+            // Add some spacing between the logo and other widgets
             Text(
               'Welcome Back!',
               style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
@@ -181,7 +194,8 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
               child: Text('Sign In'),
             ),
-            SizedBox(height: 20), // Add some spacing between the buttons
+            SizedBox(height: 20),
+            // Add some spacing between the buttons
             TextButton(
               onPressed: _showForgotPasswordDialog,
               child: Text('Forgot Password?'),

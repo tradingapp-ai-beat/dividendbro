@@ -69,27 +69,28 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
   Future<void> _showUploadOptions() async {
     await showModalBottomSheet(
       context: context,
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          ListTile(
-            leading: Icon(Icons.photo_library),
-            title: Text('Upload Image'),
-            onTap: () {
-              _pickImage(ImageSource.gallery);
-              Navigator.of(context).pop();
-            },
+      builder: (context) =>
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.photo_library),
+                title: Text('Upload Image'),
+                onTap: () {
+                  _pickImage(ImageSource.gallery);
+                  Navigator.of(context).pop();
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.camera_alt),
+                title: Text('Capture Image'),
+                onTap: () {
+                  _pickImage(ImageSource.camera);
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
           ),
-          ListTile(
-            leading: Icon(Icons.camera_alt),
-            title: Text('Capture Image'),
-            onTap: () {
-              _pickImage(ImageSource.camera);
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
     );
   }
 
@@ -100,12 +101,13 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => ChatGPTResponseScreen(
-            imagePath: imagePath,
-            subscribedTimeFrames: widget.subscribedTimeFrames,
-            name: widget.name,
-            selectedStrategy: widget.selectedStrategy,
-          ),
+          builder: (context) =>
+              ChatGPTResponseScreen(
+                imagePath: imagePath,
+                subscribedTimeFrames: widget.subscribedTimeFrames,
+                name: widget.name,
+                selectedStrategy: widget.selectedStrategy,
+              ),
         ),
       );
     }
@@ -189,37 +191,54 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
                 child: Icon(Icons.close),
               ),
             ),
-          // Rewind icon below close icon
-          if (_isImageExpanded)
-            Positioned(
-              top: 90,
-              right: 20,
-              child: FloatingActionButton(
-                mini: true,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HistoryScreen(), // Replace HistoryScreen with the actual screen you want to navigate to
-                    ),
-                  );
-                },
-                child: Icon(Icons.replay),
-              ),
-            ),
         ],
       ),
-      floatingActionButton: Align(
-        alignment: Alignment.bottomCenter,
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 16.0),
-          child: FloatingActionButton(
-            onPressed: _showUploadOptions,
-            child: Icon(Icons.add_a_photo),
-            tooltip: 'Beat Again',
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 16.0),
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              TextButton(
+                onPressed: _showUploadOptions,
+                child: Text('Beat Again'), // Text for the button
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.black,
+                  backgroundColor: Colors.white,
+                  // Button background color
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  // Button padding
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30)), // Button shape
+                ),
+              ),
+            ],
           ),
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
+      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+      // Positioning the history icon at the top left corner parallel to the close icon
+      persistentFooterButtons: [
+        Positioned(
+          left: 20,
+          top: 40,
+          child: FloatingActionButton(
+            mini: true,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HistoryScreen(), // Replace HistoryScreen with the actual screen you want to navigate to
+                ),
+              );
+            },
+            child: Icon(Icons.replay),
+          ),
+        ),
+      ],
     );
   }
+
 }
