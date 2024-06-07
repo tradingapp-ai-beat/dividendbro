@@ -8,6 +8,7 @@ import '../widgets/app_drawer.dart';
 import '../widgets/top_bar.dart';
 import '../services/image_service.dart';
 import 'history_screen.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ChatGPTResponseScreen extends StatefulWidget {
   final String imagePath;
@@ -166,7 +167,7 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
           if (!_isImageExpanded)
             Positioned(
               top: 40,
-              right: 20,
+              left: 20,
               child: FloatingActionButton(
                 mini: true,
                 onPressed: () {
@@ -197,40 +198,33 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
         padding: const EdgeInsets.only(bottom: 16.0),
         child: Align(
           alignment: Alignment.bottomCenter,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              TextButton(
-                onPressed: _showUploadOptions,
-                child: Text('Beat Again'), // Text for the button
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.black,
-                  backgroundColor: Colors.white,
-                  // Button background color
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  // Button padding
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30)), // Button shape
-                ),
+          child: TextButton(
+            onPressed: _showUploadOptions,
+            child: Text('Beat Again'),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.black,
+              backgroundColor: Colors.white,
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
               ),
-            ],
+            ),
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
-      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-      // Positioning the history icon at the top left corner parallel to the close icon
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      // Positioning the history icon at the top left corner opposite the close icon
       persistentFooterButtons: [
         Positioned(
-          left: 20,
           top: 40,
+          left: 20,
           child: FloatingActionButton(
             mini: true,
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => HistoryScreen(), // Replace HistoryScreen with the actual screen you want to navigate to
+                  builder: (context) => HistoryScreen(),
                 ),
               );
             },
