@@ -6,10 +6,13 @@ import 'provider/user_provider.dart';
 import 'screens/auth_screen.dart';
 import 'screens/image_selection_screen.dart';
 import 'screens/subscription_screen.dart';
+import 'firebase_options.dart'; // Make sure this file is generated and included in your project
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MyApp());
 }
 
@@ -25,7 +28,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-          home: WelcomeScreen(),
+        home: WelcomeScreen(),
       ),
     );
   }
