@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'dart:io' show File;
 import '../provider/user_provider.dart';
 import '../models/user_model.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
+import 'dart:convert';
 
 class HistoryScreen extends StatelessWidget {
   @override
@@ -26,7 +26,7 @@ class HistoryScreen extends StatelessWidget {
                   leading: SizedBox(
                     width: 50,
                     height: 50,
-                    child: _buildImage(entry.imageUrl),
+                    child: _buildImage(entry.imageUrl, entry.imageBytes),
                   ),
                   title: Text(
                     'Beat ${index + 1} - ${entry.timestamp.day}/${entry.timestamp.month}/${entry.timestamp.year} ${entry.timestamp.hour}:${entry.timestamp.minute.toString().padLeft(2, '0')}',
@@ -58,11 +58,15 @@ class HistoryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildImage(String imageUrl) {
-    if (kIsWeb) {
-      return Image.network(imageUrl, fit: BoxFit.cover);
+  Widget _buildImage(String? imageUrl, Uint8List? imageBytes) {
+    if (imageBytes != null) {
+      return Image.memory(imageBytes, fit: BoxFit.cover);
+    } else if (imageUrl != null && imageUrl.isNotEmpty) {
+      return Image.network(imageUrl, fit: BoxFit.cover, errorBuilder: (context, error, stackTrace) {
+        return Icon(Icons.broken_image, size: 50);
+      });
     } else {
-      return Image.network(imageUrl, fit: BoxFit.cover);
+      return Icon(Icons.image_not_supported, size: 50);
     }
   }
 
@@ -77,7 +81,7 @@ class HistoryScreen extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 height: 200,
-                child: _buildImage(entry.imageUrl),
+                child: _buildImage(entry.imageUrl, entry.imageBytes),
               ),
               SizedBox(height: 10),
               Text(entry.response),

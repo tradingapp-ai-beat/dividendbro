@@ -25,8 +25,10 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage(ImageSource source) async {
+    print('Starting image picking process');
     final pickedFile = await _picker.getImage(source: source);
     if (pickedFile != null) {
+      print('Image picked successfully');
       dynamic image;
       if (kIsWeb) {
         image = await pickedFile.readAsBytes(); // Uint8List for web
@@ -41,8 +43,10 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
       }
 
       final userProvider = Provider.of<UserProvider>(context, listen: false);
+      print('Uploading image');
       String imageUrl = await userProvider.uploadImage(image);
       if (imageUrl.isNotEmpty) {
+        print('Image uploaded successfully, URL: $imageUrl');
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -57,6 +61,8 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
       } else {
         print('Failed to upload image');
       }
+    } else {
+      print('No image picked');
     }
   }
 

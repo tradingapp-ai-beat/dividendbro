@@ -199,7 +199,9 @@ class UserProvider with ChangeNotifier {
       }
 
       final snapshot = await uploadTask.whenComplete(() {});
-      return await snapshot.ref.getDownloadURL();
+      String downloadUrl = await snapshot.ref.getDownloadURL();
+      print('Image uploaded successfully, download URL: $downloadUrl');
+      return downloadUrl;
     } catch (e) {
       print('Failed to upload image: $e');
       return '';
