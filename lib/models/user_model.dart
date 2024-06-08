@@ -2,28 +2,36 @@ class HistoryEntry {
   String imagePath;
   String response;
   DateTime timestamp;
+  String imageUrl;
   int rating;
 
   HistoryEntry({
     required this.imagePath,
     required this.response,
     required this.timestamp,
+    required this.imageUrl,
     this.rating = 0,
   });
 
-  Map<String, dynamic> toJson() => {
-    'imagePath': imagePath,
-    'response': response,
-    'timestamp': timestamp.toIso8601String(),
-    'rating': rating,
-  };
+  Map<String, dynamic> toJson() {
+    return {
+      'imagePath': imagePath,
+      'response': response,
+      'timestamp': timestamp.toIso8601String(),
+      'imageUrl': imageUrl,
+      'rating': rating,
+    };
+  }
 
-  factory HistoryEntry.fromJson(Map<String, dynamic> json) => HistoryEntry(
-    imagePath: json['imagePath'],
-    response: json['response'],
-    timestamp: DateTime.parse(json['timestamp']),
-    rating: json['rating'] ?? 0,
-  );
+  static HistoryEntry fromJson(Map<String, dynamic> json) {
+    return HistoryEntry(
+      imagePath: json['imagePath'],
+      response: json['response'],
+      timestamp: DateTime.parse(json['timestamp']),
+      imageUrl: json['imageUrl'],
+      rating: json['rating'] ?? 0,
+    );
+  }
 }
 
 class UserModel {
