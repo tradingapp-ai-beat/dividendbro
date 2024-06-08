@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
 import 'dart:io';
 import '../provider/user_provider.dart';
@@ -22,7 +23,9 @@ class HistoryScreen extends StatelessWidget {
             child: Column(
               children: [
                 ListTile(
-                  leading: Image.file(File(entry.imagePath)),
+                  leading: kIsWeb
+                      ? Image.network(entry.imagePath)
+                      : Image.file(File(entry.imagePath)),
                   title: Text(
                     'Beat ${index + 1} - ${entry.timestamp.day}/${entry.timestamp.month}/${entry.timestamp.year} ${entry.timestamp.hour}:${entry.timestamp.minute.toString().padLeft(2, '0')}',
                   ),
@@ -61,7 +64,9 @@ class HistoryScreen extends StatelessWidget {
         content: SingleChildScrollView(
           child: Column(
             children: [
-              Image.file(File(entry.imagePath)),
+              kIsWeb
+                  ? Image.network(entry.imagePath)
+                  : Image.file(File(entry.imagePath)),
               SizedBox(height: 10),
               Text(entry.response),
             ],

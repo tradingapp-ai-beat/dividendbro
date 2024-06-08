@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -70,28 +71,27 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
   Future<void> _showUploadOptions() async {
     await showModalBottomSheet(
       context: context,
-      builder: (context) =>
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ListTile(
-                leading: Icon(Icons.photo_library),
-                title: Text('Upload Image'),
-                onTap: () {
-                  _pickImage(ImageSource.gallery);
-                  Navigator.of(context).pop();
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.camera_alt),
-                title: Text('Capture Image'),
-                onTap: () {
-                  _pickImage(ImageSource.camera);
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
+      builder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          ListTile(
+            leading: Icon(Icons.photo_library),
+            title: Text('Upload Image'),
+            onTap: () {
+              _pickImage(ImageSource.gallery);
+              Navigator.of(context).pop();
+            },
           ),
+          ListTile(
+            leading: Icon(Icons.camera_alt),
+            title: Text('Capture Image'),
+            onTap: () {
+              _pickImage(ImageSource.camera);
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -102,13 +102,12 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) =>
-              ChatGPTResponseScreen(
-                imagePath: imagePath,
-                subscribedTimeFrames: widget.subscribedTimeFrames,
-                name: widget.name,
-                selectedStrategy: widget.selectedStrategy,
-              ),
+          builder: (context) => ChatGPTResponseScreen(
+            imagePath: imagePath,
+            subscribedTimeFrames: widget.subscribedTimeFrames,
+            name: widget.name,
+            selectedStrategy: widget.selectedStrategy,
+          ),
         ),
       );
     }
@@ -141,7 +140,9 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
                       boundaryMargin: EdgeInsets.all(20.0),
                       minScale: 0.1,
                       maxScale: 4.0,
-                      child: Image.file(File(widget.imagePath)),
+                      child: kIsWeb
+                          ? Image.network(widget.imagePath)
+                          : Image.file(File(widget.imagePath)),
                     ),
                   ),
                 SizedBox(height: 10),
@@ -192,6 +193,22 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
                 child: Icon(Icons.close),
               ),
             ),
+          Positioned(
+            top: 40,
+            left: 20,
+            child: FloatingActionButton(
+              mini: true,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HistoryScreen(),
+                  ),
+                );
+              },
+              child: Icon(Icons.replay),
+            ),
+          ),
         ],
       ),
       floatingActionButton: Padding(
@@ -200,7 +217,11 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
           alignment: Alignment.bottomCenter,
           child: TextButton(
             onPressed: _showUploadOptions,
-            child: Text('Beat Again'),
+            child: SvgPicture.asset(
+              'assets/beat.svg',
+              height: 30,
+              width: 30,
+            ),
             style: TextButton.styleFrom(
               foregroundColor: Colors.black,
               backgroundColor: Colors.white,
@@ -213,26 +234,6 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      // Positioning the history icon at the top left corner opposite the close icon
-      persistentFooterButtons: [
-        Positioned(
-          top: 40,
-          left: 20,
-          child: FloatingActionButton(
-            mini: true,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HistoryScreen(),
-                ),
-              );
-            },
-            child: Icon(Icons.replay),
-          ),
-        ),
-      ],
     );
   }
-
 }
