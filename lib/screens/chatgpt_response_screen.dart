@@ -1,7 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
-import 'dart:io';
 import '../provider/user_provider.dart';
 import '../models/user_model.dart';
 import '../widgets/app_drawer.dart';
@@ -43,9 +44,8 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
       // Simulate a dummy response from ChatGPT
       String response = 'This is a dummy response from ChatGPT for your trading chart.';
 
-      // Upload image and get URL
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
-      String imageUrl = await userProvider.uploadImage(widget.imagePath);
+      // Use the image URL directly
+      String imageUrl = widget.imagePath;
 
       setState(() {
         _response = response;
@@ -55,7 +55,7 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
       // Save history with timestamp and image URL
       Provider.of<UserProvider>(context, listen: false).addHistoryEntry(
         HistoryEntry(
-          imagePath: widget.imagePath,
+          imagePath: imageUrl,
           response: _response,
           timestamp: DateTime.now(),
           imageUrl: imageUrl,
@@ -96,9 +96,7 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
                       boundaryMargin: EdgeInsets.all(20.0),
                       minScale: 0.1,
                       maxScale: 4.0,
-                      child: kIsWeb
-                          ? Image.network(widget.imagePath)
-                          : Image.network(widget.imagePath),
+                      child: Image.network(widget.imagePath),
                     ),
                   ),
                 SizedBox(height: 10),
@@ -227,22 +225,31 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
       dynamic image;
       if (kIsWeb) {
         image = await pickedFile.readAsBytes(); // Uint8List for web
+        print('Picked a Uint8List image');
       } else {
         image = File(pickedFile.path); // File for mobile
       }
       final userProvider = Provider.of<UserProvider>(context, listen: false);
+      print('Starting image upload from _pickImage');
       String imageUrl = await userProvider.uploadImage(image);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ChatGPTResponseScreen(
-            imagePath: imageUrl,
-            subscribedTimeFrames: widget.subscribedTimeFrames,
-            name: widget.name,
-            selectedStrategy: widget.selectedStrategy,
+      if (imageUrl.isNotEmpty) {
+        print('Image uploaded successfully, URL: $imageUrl');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatGPTResponseScreen(
+              imagePath: imageUrl,
+              subscribedTimeFrames: widget.subscribedTimeFrames,
+              name: widget.name,
+              selectedStrategy: widget.selectedStrategy,
+            ),
           ),
-        ),
-      );
+        );
+      } else {
+        print('Failed to upload image');
+      }
+    } else {
+      print('No image picked');
     }
   }
 }
