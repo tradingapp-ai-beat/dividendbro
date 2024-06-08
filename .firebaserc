@@ -1,5 +1,9 @@
 {
   "projects": {
-    "default": "dividendbeat"
-  }
+    "default": "dividendbeat",
+    "staging": "dividendbeat"
+  },
+  "targets": {},
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
 }

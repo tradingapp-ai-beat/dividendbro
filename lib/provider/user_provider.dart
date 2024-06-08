@@ -1,11 +1,15 @@
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
+import 'package:flutter/material.dart';
+import 'dart:io';
+import '../models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import '../models/user_model.dart';
 
 class UserProvider with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
   UserModel _user;
 
   UserProvider()
@@ -28,10 +32,7 @@ class UserProvider with ChangeNotifier {
       final activeUntil = _user.cancellationDate!.add(Duration(days: 30));
       return DateTime.now().isBefore(activeUntil);
     }
-
-    if (_user.subscriptionType != null && _user.subscriptionType != 0
-
-    ) {
+    if (_user.subscriptionType != null && _user.subscriptionType != 0) {
       return true;
     } else if (_user.isFreeTrial) {
       final trialEndDate = _user.signupDate.add(Duration(days: 30));
@@ -61,12 +62,11 @@ class UserProvider with ChangeNotifier {
       return userDoc.exists;
     } catch (e) {
       print('Error checking email existence: $e');
-      return false; // Return false in case of any error
+      return false;
     }
   }
 
   Future<void> signUp(UserModel newUser) async {
-    // Check if email has been used for free trial
     final usedEmailDoc = await _firestore.collection('usedFreeTrialEmails').doc(newUser.email).get();
     if (usedEmailDoc.exists && newUser.subscriptionType == 0) {
       throw Exception('This email has already used a free trial.');
@@ -77,8 +77,8 @@ class UserProvider with ChangeNotifier {
       throw Exception('Email already exists');
     }
 
-    newUser.isFreeTrial = newUser.subscriptionType == 0; // Mark as free trial if subscription type is 0
-    newUser.signupDate = DateTime.now(); // Set signup date
+    newUser.isFreeTrial = newUser.subscriptionType == 0;
+    newUser.signupDate = DateTime.now();
     await _firestore.collection('users').doc(newUser.email).set(newUser.toJson());
     _user = newUser;
     notifyListeners();
@@ -109,8 +109,6 @@ class UserProvider with ChangeNotifier {
     User? currentUser = _auth.currentUser;
     if (currentUser != null) {
       await currentUser.updatePassword(newPassword);
-      // Optionally, you can store the hashed password in Firestore for security purposes
-      // For demonstration, we store it directly
       await _firestore.collection('users').doc(_user.email).update({'password': newPassword});
       notifyListeners();
     } else {
@@ -121,7 +119,6 @@ class UserProvider with ChangeNotifier {
   Future<void> updateSubscription(int subscriptionType, List<String> timeFrames) async {
     if (_user != null) {
       if (isTrialPeriodActive) {
-        // If still in trial period, do not allow plan change
         return;
       }
 
@@ -181,6 +178,31 @@ class UserProvider with ChangeNotifier {
         signupDate: DateTime.now(),
       );
       notifyListeners();
+    }
+  }
+
+  Future<String> uploadImage(dynamic file) async {
+    try {
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      final storageRef = _storage.ref().child('user_images/${_user.email}/$fileName.jpg');
+
+      UploadTask uploadTask;
+      if (file is Uint8List) {
+        print('Uploading a Uint8List file');
+        uploadTask = storageRef.putData(file);
+      } else if (file is File) {
+        print('Uploading a File');
+        uploadTask = storageRef.putFile(file);
+      } else {
+        print('Unsupported file type: ${file.runtimeType}');
+        throw Exception('Unsupported file type');
+      }
+
+      final snapshot = await uploadTask.whenComplete(() {});
+      return await snapshot.ref.getDownloadURL();
+    } catch (e) {
+      print('Failed to upload image: $e');
+      return '';
     }
   }
 

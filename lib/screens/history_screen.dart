@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
-import 'dart:io';
+import 'dart:io' show File;
 import '../provider/user_provider.dart';
 import '../models/user_model.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class HistoryScreen extends StatelessWidget {
   @override
@@ -23,9 +23,11 @@ class HistoryScreen extends StatelessWidget {
             child: Column(
               children: [
                 ListTile(
-                  leading: kIsWeb
-                      ? Image.network(entry.imagePath)
-                      : Image.file(File(entry.imagePath)),
+                  leading: SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: _buildImage(entry.imageUrl),
+                  ),
                   title: Text(
                     'Beat ${index + 1} - ${entry.timestamp.day}/${entry.timestamp.month}/${entry.timestamp.year} ${entry.timestamp.hour}:${entry.timestamp.minute.toString().padLeft(2, '0')}',
                   ),
@@ -56,6 +58,14 @@ class HistoryScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildImage(String imageUrl) {
+    if (kIsWeb) {
+      return Image.network(imageUrl, fit: BoxFit.cover);
+    } else {
+      return Image.network(imageUrl, fit: BoxFit.cover);
+    }
+  }
+
   void _showDetailDialog(BuildContext context, HistoryEntry entry) {
     showDialog(
       context: context,
@@ -64,9 +74,11 @@ class HistoryScreen extends StatelessWidget {
         content: SingleChildScrollView(
           child: Column(
             children: [
-              kIsWeb
-                  ? Image.network(entry.imagePath)
-                  : Image.file(File(entry.imagePath)),
+              SizedBox(
+                width: double.infinity,
+                height: 200,
+                child: _buildImage(entry.imageUrl),
+              ),
               SizedBox(height: 10),
               Text(entry.response),
             ],

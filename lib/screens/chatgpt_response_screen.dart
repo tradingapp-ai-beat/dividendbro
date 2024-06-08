@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import '../models/user_model.dart';
 import '../provider/user_provider.dart';
+import '../models/user_model.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/top_bar.dart';
-import '../services/image_service.dart';
 import 'history_screen.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ChatGPTResponseScreen extends StatefulWidget {
@@ -32,7 +31,6 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
   String _response = '';
   bool _isImageExpanded = true;
   bool _isLoading = true;
-  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -42,74 +40,32 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
 
   Future<void> _processImage() async {
     try {
-      String response = await ImageService.processImage(
-        widget.imagePath,
-        widget.selectedStrategy ?? 'default strategy',
-        widget.subscribedTimeFrames,
-      );
+      // Simulate a dummy response from ChatGPT
+      String response = 'This is a dummy response from ChatGPT for your trading chart.';
+
+      // Upload image and get URL
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      String imageUrl = await userProvider.uploadImage(widget.imagePath);
+
       setState(() {
         _response = response;
         _isLoading = false;
       });
+
+      // Save history with timestamp and image URL
+      Provider.of<UserProvider>(context, listen: false).addHistoryEntry(
+        HistoryEntry(
+          imagePath: widget.imagePath,
+          response: _response,
+          timestamp: DateTime.now(),
+          imageUrl: imageUrl,
+        ),
+      );
     } catch (e) {
       setState(() {
         _response = 'Failed to process image: ${e.toString()}';
         _isLoading = false;
       });
-    }
-
-    // Save history with timestamp
-    Provider.of<UserProvider>(context, listen: false).addHistoryEntry(
-      HistoryEntry(
-        imagePath: widget.imagePath,
-        response: _response,
-        timestamp: DateTime.now(),
-      ),
-    );
-  }
-
-  Future<void> _showUploadOptions() async {
-    await showModalBottomSheet(
-      context: context,
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          ListTile(
-            leading: Icon(Icons.photo_library),
-            title: Text('Upload Image'),
-            onTap: () {
-              _pickImage(ImageSource.gallery);
-              Navigator.of(context).pop();
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.camera_alt),
-            title: Text('Capture Image'),
-            onTap: () {
-              _pickImage(ImageSource.camera);
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _pickImage(ImageSource source) async {
-    final pickedFile = await _picker.getImage(source: source);
-    if (pickedFile != null) {
-      String imagePath = pickedFile.path;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ChatGPTResponseScreen(
-            imagePath: imagePath,
-            subscribedTimeFrames: widget.subscribedTimeFrames,
-            name: widget.name,
-            selectedStrategy: widget.selectedStrategy,
-          ),
-        ),
-      );
     }
   }
 
@@ -142,7 +98,7 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
                       maxScale: 4.0,
                       child: kIsWeb
                           ? Image.network(widget.imagePath)
-                          : Image.file(File(widget.imagePath)),
+                          : Image.network(widget.imagePath),
                     ),
                   ),
                 SizedBox(height: 10),
@@ -216,7 +172,7 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
         child: Align(
           alignment: Alignment.bottomCenter,
           child: TextButton(
-            onPressed: _showUploadOptions,
+            onPressed: () => _showUploadOptions(context),
             child: SvgPicture.asset(
               'assets/beat.svg',
               height: 30,
@@ -235,5 +191,58 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
+  }
+
+  Future<void> _showUploadOptions(BuildContext context) async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          ListTile(
+            leading: Icon(Icons.photo_library),
+            title: Text('Upload Image'),
+            onTap: () {
+              _pickImage(ImageSource.gallery);
+              Navigator.of(context).pop();
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.camera_alt),
+            title: Text('Capture Image'),
+            onTap: () {
+              _pickImage(ImageSource.camera);
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final ImagePicker _picker = ImagePicker();
+    final pickedFile = await _picker.getImage(source: source);
+    if (pickedFile != null) {
+      dynamic image;
+      if (kIsWeb) {
+        image = await pickedFile.readAsBytes(); // Uint8List for web
+      } else {
+        image = File(pickedFile.path); // File for mobile
+      }
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      String imageUrl = await userProvider.uploadImage(image);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChatGPTResponseScreen(
+            imagePath: imageUrl,
+            subscribedTimeFrames: widget.subscribedTimeFrames,
+            name: widget.name,
+            selectedStrategy: widget.selectedStrategy,
+          ),
+        ),
+      );
+    }
   }
 }
