@@ -17,10 +17,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   void _navigateToPlansScreen() async {
     if (_formKey.currentState!.validate()) {
-      bool emailExists = await Provider.of<UserProvider>(context, listen: false).checkEmailExists(_emailController.text);
+      print("Form validated successfully");
+
+      bool emailExists = await Provider.of<UserProvider>(context, listen: false)
+          .checkEmailExists(_emailController.text);
+
       if (emailExists) {
+        print("Email already exists");
         _showErrorDialog("Email already exists. Please use a different email.");
       } else {
+        print("Email is available, navigating to SignUpPlansScreen");
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -32,6 +38,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
         );
       }
+    } else {
+      print("Form validation failed");
     }
   }
 
@@ -56,37 +64,50 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   String? _validateEmail(String? value) {
+    print("Validating email: $value");
     if (value == null || value.isEmpty) {
+      print("Email cannot be empty");
       return 'Email cannot be empty';
     }
     final regex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
     if (!regex.hasMatch(value)) {
+      print("Enter a valid email address");
       return 'Enter a valid email address';
     }
+    print("Email is valid");
     return null;
   }
 
   String? _validatePassword(String? value) {
+    print("Validating password: $value");
     if (value == null || value.isEmpty) {
+      print("Password cannot be empty");
       return 'Password cannot be empty';
     }
     if (value.length < 8) {
+      print("Password must be at least 8 characters long");
       return 'Password must be at least 8 characters long';
     }
     final regex = RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$');
     if (!regex.hasMatch(value)) {
+      print("Password must contain an uppercase letter, a lowercase letter, a number, and a special character");
       return 'Password must contain an uppercase letter, a lowercase letter, a number, and a special character';
     }
+    print("Password is valid");
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
+    print("Validating confirm password: $value");
     if (value == null || value.isEmpty) {
+      print("Confirm Password cannot be empty");
       return 'Confirm Password cannot be empty';
     }
     if (value != _passwordController.text) {
+      print("Passwords do not match");
       return 'Passwords do not match';
     }
+    print("Confirm Password is valid");
     return null;
   }
 

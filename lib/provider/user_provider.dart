@@ -21,6 +21,7 @@ class UserProvider with ChangeNotifier {
     history: [],
     isFreeTrial: false,
     signupDate: DateTime.now(),
+    uid: '', // Initialize uid
   );
 
   UserModel get user => _user;
@@ -176,6 +177,7 @@ class UserProvider with ChangeNotifier {
         history: [],
         isFreeTrial: false,
         signupDate: DateTime.now(),
+        uid: '', // Initialize uid
       );
       notifyListeners();
     }
@@ -242,6 +244,7 @@ class UserProvider with ChangeNotifier {
       history: [],
       isFreeTrial: false,
       signupDate: DateTime.now(),
+      uid: '', // Initialize uid
     );
     notifyListeners();
   }

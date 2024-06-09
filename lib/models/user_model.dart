@@ -44,45 +44,30 @@ class HistoryEntry {
     );
   }
 }
-
-
 class UserModel {
-  final String email;
-  late String name;
-  int? subscriptionType;
+  String email;
+  String name;
+  int subscriptionType;
   List<String> timeFrames;
   List<HistoryEntry> history;
   bool isFreeTrial;
-  bool isCanceled;
   DateTime signupDate;
+  String uid; // Add the uid field
+  bool isCanceled;
   DateTime? cancellationDate;
 
   UserModel({
     required this.email,
     required this.name,
-    this.subscriptionType,
-    List<String>? timeFrames,
-    List<HistoryEntry>? history,
-    this.isFreeTrial = true,
+    required this.subscriptionType,
+    required this.timeFrames,
+    required this.history,
+    required this.isFreeTrial,
+    required this.signupDate,
+    required this.uid, // Add the uid parameter
     this.isCanceled = false,
     this.cancellationDate,
-    required this.signupDate,
-  })  : this.timeFrames = timeFrames ?? [],
-        this.history = history ?? [];
-
-  factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
-      email: json['email'] ?? '',
-      name: json['name'] ?? '',
-      subscriptionType: json['subscriptionType'],
-      timeFrames: json['timeFrames'] != null ? List<String>.from(json['timeFrames']) : [],
-      history: json['history'] != null ? List<HistoryEntry>.from((json['history'] as List).map((entry) => HistoryEntry.fromJson(entry))) : [],
-      isFreeTrial: json['isFreeTrial'] ?? true,
-      isCanceled: json['isCanceled'] ?? false,
-      cancellationDate: json['cancellationDate'] != null ? DateTime.parse(json['cancellationDate']) : null,
-      signupDate: json['signupDate'] != null ? DateTime.parse(json['signupDate']) : DateTime.now(),
-    );
-  }
+  });
 
   Map<String, dynamic> toJson() {
     return {
@@ -90,11 +75,27 @@ class UserModel {
       'name': name,
       'subscriptionType': subscriptionType,
       'timeFrames': timeFrames,
-      'history': history.map((entry) => entry.toJson()).toList(),
+      'history': history.map((e) => e.toJson()).toList(),
       'isFreeTrial': isFreeTrial,
+      'signupDate': signupDate.toIso8601String(),
+      'uid': uid, // Add the uid parameter
       'isCanceled': isCanceled,
       'cancellationDate': cancellationDate?.toIso8601String(),
-      'signupDate': signupDate.toIso8601String(),
     };
+  }
+
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
+      email: json['email'],
+      name: json['name'],
+      subscriptionType: json['subscriptionType'],
+      timeFrames: List<String>.from(json['timeFrames']),
+      history: List<HistoryEntry>.from(json['history'].map((e) => HistoryEntry.fromJson(e))),
+      isFreeTrial: json['isFreeTrial'],
+      signupDate: DateTime.parse(json['signupDate']),
+      uid: json['uid'], // Add the uid parameter
+      isCanceled: json['isCanceled'] ?? false,
+      cancellationDate: json['cancellationDate'] != null ? DateTime.parse(json['cancellationDate']) : null,
+    );
   }
 }

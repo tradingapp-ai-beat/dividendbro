@@ -24,26 +24,34 @@ class _SignUpPlansScreenState extends State<SignUpPlansScreen> {
 
   Future<void> _signUp() async {
     try {
+      print("Starting sign-up process...");
+
       UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: widget.email,
         password: widget.password,
       );
 
       UserModel newUser = UserModel(
+        uid: userCredential.user!.uid,
         email: widget.email,
         name: widget.name,
         subscriptionType: _selectedSubscriptionType,
         timeFrames: _selectedTimeFrames,
         signupDate: DateTime.now(),
+        isFreeTrial: _selectedSubscriptionType == 0,
+        history: [],
+        isCanceled: false,
+        cancellationDate: null,
       );
 
       await Provider.of<UserProvider>(context, listen: false).signUp(newUser);
+      print("User signed up and data saved to Firestore.");
 
       if (_selectedSubscriptionType == 0) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => QuestionsScreen(subscribedTimeFrames: [], name: ''),
+            builder: (context) => QuestionsScreen(subscribedTimeFrames: [], name: widget.name),
           ),
         );
       } else {
@@ -60,6 +68,7 @@ class _SignUpPlansScreenState extends State<SignUpPlansScreen> {
         );
       }
     } catch (e) {
+      print("Error during sign-up: $e");
       _showErrorDialog(e.toString());
     }
   }
