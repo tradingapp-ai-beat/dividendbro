@@ -106,7 +106,7 @@ class _SignUpPlansScreenState extends State<SignUpPlansScreen> {
           price: '19.99€ / month',
           description: 'Choose 2 Beats time frames',
           subscriptionType: 2,
-          maxSelections: 2,
+          maxSelections: 3,
         ),
         _buildSubscriptionCard(
           title: 'Beat 3',

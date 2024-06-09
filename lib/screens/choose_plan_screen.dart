@@ -79,23 +79,23 @@ class _ChoosePlanScreenState extends State<ChoosePlanScreen> {
     return Column(
       children: [
         _buildSubscriptionCard(
-          title: 'Plan 1',
+          title: 'Beat 1',
           price: '9.99€ / month',
-          description: 'Choose 1 time frame',
+          description: 'Choose 1 Beat time frame',
           subscriptionType: 1,
           maxSelections: 1,
         ),
         _buildSubscriptionCard(
-          title: 'Plan 2',
+          title: 'Beat 2',
           price: '19.99€ / month',
-          description: 'Choose 2 time frames',
+          description: 'Choose 2 Beats time frames',
           subscriptionType: 2,
-          maxSelections: 2,
+          maxSelections: 3,
         ),
         _buildSubscriptionCard(
-          title: 'Plan 3',
-          price: '29.99€ / month',
-          description: 'Unlimited time frames',
+          title: 'Beat 3',
+          price: '49.99€ / month',
+          description: 'Unlimited Beats time frames',
           subscriptionType: 3,
           maxSelections: 8,
         ),

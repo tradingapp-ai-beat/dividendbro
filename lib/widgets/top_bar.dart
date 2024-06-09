@@ -15,7 +15,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text('Trading App'),
+      title: Text('dividendBeat - Beat that market'),
       actions: [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -23,7 +23,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         DropdownButton<String>(
           icon: Icon(Icons.more_vert, color: Colors.white),
-          items: <String>['Profile', 'Settings', 'Logout'].map((String value) {
+          items: <String>[ 'Logout'].map((String value) {
             return DropdownMenuItem<String>(
               value: value,
               child: Text(value),
