@@ -21,22 +21,33 @@ class PlanScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            _buildSubscriptionDetails(userProvider, user),
-            SizedBox(height: 20),
-            if (userProvider.isSubscriptionStillActive && userProvider.isCanceled)
-              _buildCancellationMessage(userProvider),
-            SizedBox(height: 20),
-            if (user.subscriptionType != null && user.subscriptionType != 0 && !userProvider.isCanceled)
-              _buildCancelButton(context),
-            if (userProvider.isCanceled && !userProvider.isSubscriptionStillActive)
-              _buildSubscribeButton(context),
-          ],
-        ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            padding: EdgeInsets.all(16.0),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: constraints.maxWidth > 600 ? 600 : double.infinity,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    _buildSubscriptionDetails(userProvider, user),
+                    SizedBox(height: 20),
+                    if (userProvider.isSubscriptionStillActive && userProvider.isCanceled)
+                      _buildCancellationMessage(userProvider),
+                    SizedBox(height: 20),
+                    if (user.subscriptionType != null && user.subscriptionType != 0 && !userProvider.isCanceled)
+                      _buildCancelButton(context),
+                    if (userProvider.isCanceled && !userProvider.isSubscriptionStillActive)
+                      _buildSubscribeButton(context),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

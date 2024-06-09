@@ -108,83 +108,94 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         title: Text('Profile'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            Row(
-              children: [
-                Expanded(
-                  child: _isEditing
-                      ? TextField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      labelText: 'Name',
-                      border: OutlineInputBorder(),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: 600,
+                ),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _isEditing
+                              ? TextField(
+                            controller: _nameController,
+                            decoration: InputDecoration(
+                              labelText: 'Name',
+                              border: OutlineInputBorder(),
+                            ),
+                          )
+                              : Text(
+                            'Name: ${user.name}',
+                            style: TextStyle(fontSize: 18.0),
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(_isEditing ? Icons.check : Icons.edit),
+                          onPressed: () async {
+                            if (_isEditing) {
+                              await Provider.of<UserProvider>(context, listen: false)
+                                  .updateName(_nameController.text);
+                            }
+                            setState(() {
+                              _isEditing = !_isEditing;
+                            });
+                          },
+                        ),
+                      ],
                     ),
-                  )
-                      : Text(
-                    'Name: ${user.name}',
-                    style: TextStyle(fontSize: 18.0),
-                  ),
+                    SizedBox(height: 20),
+                    Text(
+                      'Email: ${user.email}',
+                      style: TextStyle(fontSize: 18.0),
+                    ),
+                    SizedBox(height: 20),
+                    _isChangingPassword
+                        ? Column(
+                      children: [
+                        TextField(
+                          controller: _newPasswordController,
+                          decoration: InputDecoration(
+                            labelText: 'New Password',
+                            border: OutlineInputBorder(),
+                          ),
+                          obscureText: true,
+                        ),
+                        SizedBox(height: 20),
+                        TextField(
+                          controller: _confirmPasswordController,
+                          decoration: InputDecoration(
+                            labelText: 'Confirm Password',
+                            border: OutlineInputBorder(),
+                          ),
+                          obscureText: true,
+                        ),
+                        SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: _updatePassword,
+                          child: Text('Update Password'),
+                        ),
+                      ],
+                    )
+                        : ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _isChangingPassword = true;
+                        });
+                      },
+                      child: Text('Change Password'),
+                    ),
+                  ],
                 ),
-                IconButton(
-                  icon: Icon(_isEditing ? Icons.check : Icons.edit),
-                  onPressed: () async {
-                    if (_isEditing) {
-                      await Provider.of<UserProvider>(context, listen: false)
-                          .updateName(_nameController.text);
-                    }
-                    setState(() {
-                      _isEditing = !_isEditing;
-                    });
-                  },
-                ),
-              ],
+              ),
             ),
-            SizedBox(height: 20),
-            Text(
-              'Email: ${user.email}',
-              style: TextStyle(fontSize: 18.0),
-            ),
-            SizedBox(height: 20),
-            _isChangingPassword
-                ? Column(
-              children: [
-                TextField(
-                  controller: _newPasswordController,
-                  decoration: InputDecoration(
-                    labelText: 'New Password',
-                    border: OutlineInputBorder(),
-                  ),
-                  obscureText: true,
-                ),
-                SizedBox(height: 20),
-                TextField(
-                  controller: _confirmPasswordController,
-                  decoration: InputDecoration(
-                    labelText: 'Confirm Password',
-                    border: OutlineInputBorder(),
-                  ),
-                  obscureText: true,
-                ),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: _updatePassword,
-                  child: Text('Update Password'),
-                ),
-              ],
-            )
-                : ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _isChangingPassword = true;
-                });
-              },
-              child: Text('Change Password'),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

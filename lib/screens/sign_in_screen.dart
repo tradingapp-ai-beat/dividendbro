@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import '../provider/user_provider.dart';
 import 'image_selection_screen.dart';
-import 'sign_up_screen.dart'; // Import the SignUpScreen
+import 'sign_up_screen.dart';
 
 class SignInScreen extends StatefulWidget {
   @override
@@ -18,18 +18,16 @@ class _SignInScreenState extends State<SignInScreen> {
     String email = _emailController.text;
     String password = _passwordController.text;
 
-    bool success = await Provider.of<UserProvider>(context, listen: false)
-        .signIn(email, password);
+    bool success = await Provider.of<UserProvider>(context, listen: false).signIn(email, password);
     if (success) {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) =>
-              ImageSelectionScreen(
-                subscribedTimeFrames: userProvider.user.timeFrames ?? [],
-                name: userProvider.user.name ?? '',
-              ),
+          builder: (context) => ImageSelectionScreen(
+            subscribedTimeFrames: userProvider.user.timeFrames ?? [],
+            name: userProvider.user.name ?? '',
+          ),
         ),
       );
     } else {
@@ -39,20 +37,15 @@ class _SignInScreenState extends State<SignInScreen> {
 
   Future<void> _sendPasswordResetEmail(String email) async {
     try {
-      HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
-          'sendPasswordResetEmail');
-      final response = await callable.call(<String, dynamic>{
-        'email': email,
-      });
+      HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('sendPasswordResetEmail');
+      final response = await callable.call(<String, dynamic>{ 'email': email });
       if (response.data['success']) {
         _showSuccessDialog("Password reset email sent to $email");
       } else {
-        _showErrorDialog(
-            "Failed to send password reset email: ${response.data['error']}");
+        _showErrorDialog("Failed to send password reset email: ${response.data['error']}");
       }
     } catch (e) {
-      _showErrorDialog(
-          "An error occurred while sending the password reset email.");
+      _showErrorDialog("An error occurred while sending the password reset email.");
     }
   }
 
@@ -84,8 +77,7 @@ class _SignInScreenState extends State<SignInScreen> {
               child: Text("OK"),
               onPressed: () async {
                 Navigator.of(context).pop();
-                await _sendPasswordResetEmail(
-                    _forgotPasswordEmailController.text);
+                await _sendPasswordResetEmail(_forgotPasswordEmailController.text);
               },
             ),
           ],
@@ -141,77 +133,87 @@ class _SignInScreenState extends State<SignInScreen> {
         title: Text('Sign In'),
         automaticallyImplyLeading: false, // This removes the back arrow
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            Image.asset(
-              'assets/logo.png', // Path to your logo.png asset
-              height: 100, // Adjust the height as needed
-              width: 100, // Adjust the width as needed
-            ),
-            SizedBox(height: 20),
-            // Add some spacing between the logo and other widgets
-            Text(
-              'Welcome!  ...dividendBeat AI is on the House!',
-              style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Please sign in to continue.',
-              style: TextStyle(fontSize: 16.0, color: Colors.grey[600]),
-            ),
-            SizedBox(height: 20),
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          bool isMobile = constraints.maxWidth < 600;
+          return SingleChildScrollView(
+            padding: EdgeInsets.all(16.0),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: 600),
+                child: Column(
+                  children: <Widget>[
+                    Image.asset(
+                      'assets/logo.png', // Path to your logo.png asset
+                      height: 100, // Adjust the height as needed
+                      width: 100, // Adjust the width as needed
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      'Welcome!  ...dividendBeat AI is on the House!',
+                      style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Please sign in to continue.',
+                      style: TextStyle(fontSize: 16.0, color: Colors.grey[600]),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 20),
+                    TextField(
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    TextField(
+                      controller: _passwordController,
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      obscureText: true,
+                    ),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: _signIn,
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 15.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        textStyle: TextStyle(fontSize: 16.0),
+                      ),
+                      child: Text('Sign In'),
+                    ),
+                    SizedBox(height: 20),
+                    TextButton(
+                      onPressed: _showForgotPasswordDialog,
+                      child: Text('Forgot Password?'),
+                    ),
+                    SizedBox(height: 20),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SignUpScreen()),
+                        );
+                      },
+                      child: Text('Don\'t have an account? Sign Up'),
+                    ),
+                  ],
                 ),
               ),
             ),
-            SizedBox(height: 20),
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-              ),
-              obscureText: true,
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _signIn,
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 15.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                textStyle: TextStyle(fontSize: 16.0),
-              ),
-              child: Text('Sign In'),
-            ),
-            SizedBox(height: 20),
-            // Add some spacing between the buttons
-            TextButton(
-              onPressed: _showForgotPasswordDialog,
-              child: Text('Forgot Password?'),
-            ),
-            SizedBox(height: 20),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SignUpScreen()),
-                );
-              },
-              child: Text('Don\'t have an account? Sign Up'),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

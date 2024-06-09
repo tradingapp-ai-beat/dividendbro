@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trading_advice_app_v2/screens/questions_screen.dart';
-import 'image_selection_screen.dart';
 import '../widgets/top_bar.dart';
 
 class PaymentScreen extends StatelessWidget {
@@ -14,55 +13,77 @@ class PaymentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Payment'),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Subscription Type: $subscriptionType',
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Time Frames: ${timeFrames.join(', ')}',
-              style: TextStyle(fontSize: 18.0),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Payment Simulation',
-              style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'This is a simulated payment screen. In a real app, you would integrate a payment gateway here.',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16.0, color: Colors.grey[600]),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => QuestionsScreen(subscribedTimeFrames: [], name: '',),
-                  ),
-                      (route) => false,
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 15.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+      appBar: TopBar(name: name), // Use your custom TopBar widget
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            padding: EdgeInsets.all(16.0),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: constraints.maxWidth > 600 ? 600 : double.infinity,
                 ),
-                textStyle: TextStyle(fontSize: 16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'Subscription Type: $subscriptionType',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Time Frames: ${timeFrames.join(', ')}',
+                      style: TextStyle(fontSize: 18.0),
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      'Payment Simulation',
+                      style: TextStyle(
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'This is a simulated payment screen. In a real app, you would integrate a payment gateway here.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 16.0, color: Colors.grey[600]),
+                    ),
+                    SizedBox(height: 20),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => QuestionsScreen(
+                                subscribedTimeFrames: timeFrames,
+                                name: name,
+                              ),
+                            ),
+                                (route) => false,
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 15.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          textStyle: TextStyle(fontSize: 16.0),
+                        ),
+                        child: Text('Complete Payment'),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              child: Text('Complete Payment'),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

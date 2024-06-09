@@ -1,14 +1,13 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../provider/user_provider.dart';
 import '../models/user_model.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/top_bar.dart';
 import 'history_screen.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ChatGPTResponseScreen extends StatefulWidget {
@@ -71,100 +70,108 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isLargeScreen = MediaQuery.of(context).size.width > 600;
+
     return Scaffold(
       appBar: TopBar(name: widget.name),
       drawer: AppDrawer(),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              children: <Widget>[
-                Text(
-                  'Time Frames: ${widget.subscribedTimeFrames.join(', ')}',
-                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 10),
-                if (_isImageExpanded)
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _isImageExpanded = false;
-                      });
-                    },
-                    child: InteractiveViewer(
-                      boundaryMargin: EdgeInsets.all(20.0),
-                      minScale: 0.1,
-                      maxScale: 4.0,
-                      child: Image.network(widget.imagePath),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 800),
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      'Your available timeframes: ${widget.subscribedTimeFrames.join(', ')}',
+                      style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
                     ),
-                  ),
-                SizedBox(height: 10),
-                if (_isLoading)
-                  CircularProgressIndicator()
-                else
-                  Card(
-                    elevation: 4.0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        _response,
-                        style: TextStyle(fontSize: 18.0),
+                    SizedBox(height: 10),
+                    if (_isImageExpanded)
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _isImageExpanded = false;
+                          });
+                        },
+                        child: InteractiveViewer(
+                          boundaryMargin: EdgeInsets.all(20.0),
+                          minScale: 0.1,
+                          maxScale: 4.0,
+                          child: Image.network(widget.imagePath),
+                        ),
                       ),
-                    ),
-                  ),
-              ],
-            ),
+                    SizedBox(height: 10),
+                    if (_isLoading)
+                      CircularProgressIndicator()
+                    else
+                      Card(
+                        elevation: 4.0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            _response,
+                            style: TextStyle(fontSize: 18.0),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              Positioned(
+                top: 40,
+                right: 20,
+                child: FloatingActionButton(
+                  mini: true,
+                  onPressed: () {
+                    setState(() {
+                      _isImageExpanded = !_isImageExpanded;
+                    });
+                  },
+                  child: Icon(_isImageExpanded ? Icons.close : Icons.image),
+                ),
+              ),
+              Positioned(
+                top: 40,
+                left: 20,
+                child: FloatingActionButton(
+                  mini: true,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HistoryScreen(),
+                      ),
+                    );
+                  },
+                  child: Icon(Icons.replay),
+                ),
+              ),
+            ],
           ),
-          Positioned(
-            top: 40,
-            right: 20,
-            child: FloatingActionButton(
-              mini: true,
-              onPressed: () {
-                setState(() {
-                  _isImageExpanded = !_isImageExpanded;
-                });
-              },
-              child: Icon(_isImageExpanded ? Icons.close : Icons.image),
-            ),
-          ),
-          Positioned(
-            top: 40,
-            left: 20,
-            child: FloatingActionButton(
-              mini: true,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HistoryScreen(),
-                  ),
-                );
-              },
-              child: Icon(Icons.replay),
-            ),
-          ),
-        ],
+        ),
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 16.0),
         child: Align(
           alignment: Alignment.bottomCenter,
-          child: TextButton(
+          child: ElevatedButton.icon(
             onPressed: () => _showUploadOptions(context),
-            child: SvgPicture.asset(
+            icon: SvgPicture.asset(
               'assets/beat.svg',
               height: 30,
               width: 30,
             ),
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.black,
-              backgroundColor: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            label: Text('Select Image'),
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
               ),

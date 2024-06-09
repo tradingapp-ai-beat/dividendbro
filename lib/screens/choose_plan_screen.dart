@@ -60,14 +60,23 @@ class _ChoosePlanScreenState extends State<ChoosePlanScreen> {
           children: <Widget>[
             Text(
               'Select a Subscription Plan',
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
             _buildSubscriptionOptions(),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _subscribe,
-              child: Text('Subscribe'),
+            Center(
+              child: ElevatedButton(
+                onPressed: _subscribe,
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 15.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  textStyle: TextStyle(fontSize: 16.0),
+                ),
+                child: Text('Subscribe'),
+              ),
             ),
           ],
         ),
