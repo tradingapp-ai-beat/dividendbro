@@ -8,6 +8,7 @@ class HistoryEntry {
   String imageUrl;
   Uint8List? imageBytes;
   int rating;
+  String title;
 
   HistoryEntry({
     required this.imagePath,
@@ -16,6 +17,7 @@ class HistoryEntry {
     required this.imageUrl,
     this.imageBytes,
     this.rating = 0,
+    this.title = '',
   });
 
   Map<String, dynamic> toJson() {
@@ -26,6 +28,7 @@ class HistoryEntry {
       'imageUrl': imageUrl,
       'imageBytes': imageBytes != null ? base64Encode(imageBytes!) : null,
       'rating': rating,
+      'title': title,
     };
   }
 
@@ -37,6 +40,7 @@ class HistoryEntry {
       imageUrl: json['imageUrl'],
       imageBytes: json['imageBytes'] != null ? base64Decode(json['imageBytes']) : null,
       rating: json['rating'],
+      title: json['title'], // Parse title from JSON
     );
   }
 }

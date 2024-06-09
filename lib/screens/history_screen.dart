@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../provider/user_provider.dart';
 import '../models/user_model.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
+import 'dart:convert';
 
 class HistoryScreen extends StatelessWidget {
   @override
@@ -28,7 +29,9 @@ class HistoryScreen extends StatelessWidget {
                     child: _buildImage(entry.imageUrl, entry.imageBytes),
                   ),
                   title: Text(
-                    'Beat ${index + 1} - ${entry.timestamp.day}/${entry.timestamp.month}/${entry.timestamp.year} ${entry.timestamp.hour}:${entry.timestamp.minute.toString().padLeft(2, '0')}',
+                    entry.title.isNotEmpty
+                        ? entry.title
+                        : 'Beat ${index + 1} - ${entry.timestamp.day}/${entry.timestamp.month}/${entry.timestamp.year} ${entry.timestamp.hour}:${entry.timestamp.minute.toString().padLeft(2, '0')}',
                   ),
                   subtitle: Text(entry.response, maxLines: 2, overflow: TextOverflow.ellipsis),
                   trailing: PopupMenuButton<String>(
@@ -36,7 +39,7 @@ class HistoryScreen extends StatelessWidget {
                       if (result == 'change_name') {
                         _showChangeNameDialog(context, entry, index);
                       } else if (result == 'delete') {
-                        _deleteHistoryEntry(context, index);
+                        _showDeleteConfirmationDialog(context, index);
                       }
                     },
                     itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -119,7 +122,9 @@ class HistoryScreen extends StatelessWidget {
   }
 
   void _showChangeNameDialog(BuildContext context, HistoryEntry entry, int index) {
-    final TextEditingController _controller = TextEditingController(text: entry.response);
+    final TextEditingController _controller = TextEditingController(text: entry.title.isNotEmpty
+        ? entry.title
+        : 'Beat ${index + 1} - ${entry.timestamp.day}/${entry.timestamp.month}/${entry.timestamp.year} ${entry.timestamp.hour}:${entry.timestamp.minute.toString().padLeft(2, '0')}');
 
     showDialog(
       context: context,
@@ -148,7 +153,28 @@ class HistoryScreen extends StatelessWidget {
     );
   }
 
-  void _deleteHistoryEntry(BuildContext context, int index) {
-    Provider.of<UserProvider>(context, listen: false).deleteHistoryEntry(index);
+  void _showDeleteConfirmationDialog(BuildContext context, int index) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Delete Beat'),
+        content: Text('Are you sure you want to delete this beat?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Provider.of<UserProvider>(context, listen: false).deleteHistoryEntry(index);
+              Navigator.of(context).pop();
+            },
+            child: Text('Delete'),
+          ),
+        ],
+      ),
+    );
   }
 }
