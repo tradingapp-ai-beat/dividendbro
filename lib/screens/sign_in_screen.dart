@@ -153,7 +153,7 @@ class _SignInScreenState extends State<SignInScreen> {
             SizedBox(height: 20),
             // Add some spacing between the logo and other widgets
             Text(
-              'Welcome Back!',
+              'Welcome!  ...dividendBeat AI is on the House!',
               style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),

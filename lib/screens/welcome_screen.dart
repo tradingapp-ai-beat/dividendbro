@@ -50,7 +50,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               ),
               SizedBox(height: 20),
               const Text(
-                'With just 1 simple click, enhance your trading confidence and keep track of all your trades, dividendBeat is your AI-powered personal trading advisor. Empowering you to make informed decisions and optimize your trading strategies for financial success. ',
+                'No more endless time consuming analysing trading charts, with just 1 simple click, simply and fastly enhance your trading strategy with confidence and keep track of all your trades analysis, dividendBeat is your AI-powered personal trading advisor. Empowering you to make informed decisions in a blink of an eye and optimize your trading strategies for financial success. ',
                 style: TextStyle(
                   fontFamily: 'RobotoMono',
                   fontSize: 18,
@@ -102,7 +102,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               ),
               SizedBox(height: 10),
               const Text(
-                'Before diving into trading, it''s crucial to understand the risks involved. Always trade responsibly. Now, a PRO Tip from dividendBeat: Enhance dividendBeat analysis with key indicators on your chart images. dividendBeat recommends using RSI, MACD, EMA 20, and Bollinger Bands to make informed decisions and maximize your trading potential.',
+                'Before diving into trading, it''s crucial to understand the risks involved. Always trade responsibly.' ,
                 style: TextStyle(
                   fontFamily: 'RobotoMono',
                   fontSize: 14,

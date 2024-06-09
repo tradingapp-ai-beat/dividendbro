@@ -15,7 +15,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text('dividendBeat - Beat that market'),
+      title: Text(''),
       actions: [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0),

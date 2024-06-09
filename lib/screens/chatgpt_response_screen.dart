@@ -119,34 +119,19 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
               ],
             ),
           ),
-          if (!_isImageExpanded)
-            Positioned(
-              top: 40,
-              left: 20,
-              child: FloatingActionButton(
-                mini: true,
-                onPressed: () {
-                  setState(() {
-                    _isImageExpanded = true;
-                  });
-                },
-                child: Icon(Icons.image),
-              ),
+          Positioned(
+            top: 40,
+            right: 20,
+            child: FloatingActionButton(
+              mini: true,
+              onPressed: () {
+                setState(() {
+                  _isImageExpanded = !_isImageExpanded;
+                });
+              },
+              child: Icon(_isImageExpanded ? Icons.close : Icons.image),
             ),
-          if (_isImageExpanded)
-            Positioned(
-              top: 40,
-              right: 20,
-              child: FloatingActionButton(
-                mini: true,
-                onPressed: () {
-                  setState(() {
-                    _isImageExpanded = false;
-                  });
-                },
-                child: Icon(Icons.close),
-              ),
-            ),
+          ),
           Positioned(
             top: 40,
             left: 20,
