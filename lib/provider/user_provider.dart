@@ -224,6 +224,14 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> deleteHistory() async {
+    _user.history.clear();
+    await _firestore.collection('users').doc(_user.email).update({
+      'history': [],
+    });
+    notifyListeners();
+  }
+
   Future<void> logout() async {
     await _auth.signOut();
     _user = UserModel(

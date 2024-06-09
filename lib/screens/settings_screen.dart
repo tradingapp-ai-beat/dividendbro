@@ -65,6 +65,32 @@ class SettingsScreen extends StatelessWidget {
                 }
               },
             ),
+            ListTile(
+              title: Text('Delete History'),
+              onTap: () async {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text('Confirm History Deletion'),
+                    content: Text('Are you sure you want to delete your history? This action cannot be undone.'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: Text('No'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: Text('Yes'),
+                      ),
+                    ],
+                  ),
+                );
+                if (confirm == true) {
+                  await Provider.of<UserProvider>(context, listen: false).deleteHistory();
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('History deleted successfully.')));
+                }
+              },
+            ),
           ],
         ),
       ),
