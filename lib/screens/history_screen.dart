@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../provider/user_provider.dart';
 import '../models/user_model.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
-import 'dart:convert';
 
 class HistoryScreen extends StatelessWidget {
   @override
@@ -32,6 +31,25 @@ class HistoryScreen extends StatelessWidget {
                     'Beat ${index + 1} - ${entry.timestamp.day}/${entry.timestamp.month}/${entry.timestamp.year} ${entry.timestamp.hour}:${entry.timestamp.minute.toString().padLeft(2, '0')}',
                   ),
                   subtitle: Text(entry.response, maxLines: 2, overflow: TextOverflow.ellipsis),
+                  trailing: PopupMenuButton<String>(
+                    onSelected: (String result) {
+                      if (result == 'change_name') {
+                        _showChangeNameDialog(context, entry, index);
+                      } else if (result == 'delete') {
+                        _deleteHistoryEntry(context, index);
+                      }
+                    },
+                    itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                      const PopupMenuItem<String>(
+                        value: 'change_name',
+                        child: Text('Change Beat Name'),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: 'delete',
+                        child: Text('Delete'),
+                      ),
+                    ],
+                  ),
                   onTap: () {
                     _showDetailDialog(context, entry);
                   },
@@ -98,5 +116,39 @@ class HistoryScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _showChangeNameDialog(BuildContext context, HistoryEntry entry, int index) {
+    final TextEditingController _controller = TextEditingController(text: entry.response);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Change Beat Name'),
+        content: TextField(
+          controller: _controller,
+          decoration: InputDecoration(labelText: 'Beat Name'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Provider.of<UserProvider>(context, listen: false).updateHistoryEntryName(index, _controller.text);
+              Navigator.of(context).pop();
+            },
+            child: Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _deleteHistoryEntry(BuildContext context, int index) {
+    Provider.of<UserProvider>(context, listen: false).deleteHistoryEntry(index);
   }
 }
