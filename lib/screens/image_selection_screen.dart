@@ -144,7 +144,7 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
             ),
             SizedBox(height: 10),
             Text(
-              'PRO Tip - dividendBeat recommends using RSI, MACD, EMA 20, and Bollinger Bands to make informed decisions and maximize your trading potential\n'
+              'PRO Tip - dividendBeat recommends using RSI, MACD, EMA 20, EMA 50, EMA 200 and Bollinger Bands to make informed decisions and maximize your trading potential\n'
                   '1. Capture or upload an image of your trading chart.\n'
                   '2. Our system will analyze the chart and provide insights.\n'
                   '3. Follow the given instructions to make informed trading decisions.',
