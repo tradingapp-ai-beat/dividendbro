@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../provider/user_provider.dart';
 import '../models/user_model.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
-import 'dart:convert';
 
 class HistoryScreen extends StatelessWidget {
   @override
@@ -57,20 +56,7 @@ class HistoryScreen extends StatelessWidget {
                     _showDetailDialog(context, entry);
                   },
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(5, (starIndex) {
-                    return IconButton(
-                      icon: Icon(
-                        starIndex < entry.rating ? Icons.star : Icons.star_border,
-                        color: entry.rating >= 3 ? Colors.green : Colors.red,
-                      ),
-                      onPressed: () {
-                        Provider.of<UserProvider>(context, listen: false).updateHistoryEntryRating(index, starIndex + 1);
-                      },
-                    );
-                  }),
-                ),
+                _buildRatingRow(context, entry, index),
               ],
             ),
           );
@@ -89,6 +75,23 @@ class HistoryScreen extends StatelessWidget {
     } else {
       return Icon(Icons.image_not_supported, size: 50);
     }
+  }
+
+  Widget _buildRatingRow(BuildContext context, HistoryEntry entry, int index) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(5, (starIndex) {
+        return IconButton(
+          icon: Icon(
+            starIndex < entry.rating ? Icons.star : Icons.star_border,
+            color: entry.rating >= 3 ? Colors.green : Colors.red,
+          ),
+          onPressed: () {
+            Provider.of<UserProvider>(context, listen: false).updateHistoryEntryRating(index, starIndex + 1);
+          },
+        );
+      }),
+    );
   }
 
   void _showDetailDialog(BuildContext context, HistoryEntry entry) {

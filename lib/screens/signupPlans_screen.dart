@@ -219,30 +219,41 @@ class _SignUpPlansScreenState extends State<SignUpPlansScreen> {
             },
           ),
         ),
-        body: SingleChildScrollView(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            children: <Widget>[
-              Text(
-                'Choose a Subscription Plan',
-                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
-              _buildSubscriptionOptions(),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _signUp,
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 15.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            bool isMobile = constraints.maxWidth < 600;
+            return SingleChildScrollView(
+              padding: EdgeInsets.all(16.0),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 800),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        'Choose a Subscription Plan',
+                        style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 10),
+                      _buildSubscriptionOptions(),
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: _signUp,
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 15.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          textStyle: TextStyle(fontSize: 16.0),
+                        ),
+                        child: Text('Sign Up'),
+                      ),
+                    ],
                   ),
-                  textStyle: TextStyle(fontSize: 16.0),
                 ),
-                child: Text('Sign Up'),
               ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
