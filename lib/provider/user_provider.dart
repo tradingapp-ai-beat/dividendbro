@@ -208,8 +208,8 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<void> updateHistoryEntryName(int index, String newName) async {
-    _user.history[index].response = newName;
+  Future<void> updateHistoryEntryName(int index, String newTitle) async {
+    _user.history[index].title = newTitle;
     await _firestore.collection('users').doc(_user.email).update({
       'history': _user.history.map((e) => e.toJson()).toList(),
     });
