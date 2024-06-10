@@ -107,7 +107,7 @@ class PlanScreen extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.all(16.0),
         child: Text(
-          'Your plan was canceled and will be active until ${userProvider.user.cancellationDate!.add(Duration(days: 30)).toLocal().toString().split(' ')[0]}',
+          'Your plan was canceled and will be active until ${userProvider.user.cancellationDate!.add(Duration(days: 1)).toLocal().toString().split(' ')[0]}',
           style: TextStyle(
             fontFamily: 'RobotoMono',
             fontSize: 16,

@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
       child: MaterialApp(
-        title: 'Trading Advice App',
+        title: 'dividendBeat',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),

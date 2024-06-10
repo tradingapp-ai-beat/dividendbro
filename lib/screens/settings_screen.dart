@@ -30,7 +30,7 @@ class SettingsScreen extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: Text(
-                          'You are currently on a free trial period. You will be notified to pay for a subscription after 30 days.',
+                          'You are currently on a free trial period. You will be notified to pay for a subscription after 14 days.',
                           style: TextStyle(color: Colors.green),
                         ),
                       ),
