@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trading_advice_app_v2/screens/disclaimer_screen.dart';
+import 'package:trading_advice_app_v2/screens/privacy_screen.dart';
 import '../provider/user_provider.dart';
 import '../screens/profile_screen.dart';
 import '../screens/settings_screen.dart';
@@ -76,6 +77,16 @@ class AppDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => DisclaimerScreen()),
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.info),
+            title: Text('Privacy Policy'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PrivacyScreen()),
               );
             },
           ),

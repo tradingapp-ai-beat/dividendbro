@@ -15,6 +15,10 @@ class ImageService {
 
     String? extractedTimeframe = analysisResult['timeframe'];
 
+    if (extractedTimeframe == null || extractedTimeframe.isEmpty) {
+      return 'The uploaded chart image does not contain clear information. Please upload a better-quality image with more detail.';
+    }
+
     if (!timeframes.contains(extractedTimeframe)) {
       return 'The timeframe of the uploaded chart is $extractedTimeframe which is not in your subscription plan. Please upgrade your plan.';
     }

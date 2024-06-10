@@ -26,7 +26,7 @@ class SubscriptionScreen extends StatelessWidget {
                   children: <Widget>[
                     if (userProvider.isTrialPeriodActive)
                       Text(
-                        'You are currently on a free trial period. You will be notified to pay for a subscription after 30 days.',
+                        'You are currently on a free trial period. You will be notified to pay for a subscription after 14 days.',
                         style: TextStyle(color: Colors.green),
                         textAlign: TextAlign.center,
                       ),

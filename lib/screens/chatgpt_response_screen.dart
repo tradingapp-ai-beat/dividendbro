@@ -9,18 +9,22 @@ import '../widgets/app_drawer.dart';
 import '../widgets/top_bar.dart';
 import 'history_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'questions_screen.dart';  // Import the QuestionsScreen
+import 'questions_screen2.dart'; // Import the QuestionsScreen2
 
 class ChatGPTResponseScreen extends StatefulWidget {
   final String imagePath;
   final List<String> subscribedTimeFrames;
   final String name;
   final String? selectedStrategy;
+  final String? additionalParameter;
 
   ChatGPTResponseScreen({
     required this.imagePath,
     required this.subscribedTimeFrames,
     required this.name,
     this.selectedStrategy,
+    this.additionalParameter,
   });
 
   @override
@@ -67,6 +71,19 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
       });
     }
   }
+
+  void _navigateToQuestionnaire() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QuestionsScreen(
+          subscribedTimeFrames: widget.subscribedTimeFrames,
+          name: widget.name,
+        ),
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -154,6 +171,15 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
                   child: Icon(Icons.replay),
                 ),
               ),
+              Positioned(
+                bottom: 100,
+                right: 20,
+                child: FloatingActionButton(
+                  mini: true,
+                  onPressed: _navigateToQuestionnaire,
+                  child: Icon(Icons.settings),
+                ),
+              ),
             ],
           ),
         ),
@@ -234,6 +260,7 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
               subscribedTimeFrames: widget.subscribedTimeFrames,
               name: widget.name,
               selectedStrategy: widget.selectedStrategy,
+              additionalParameter: widget.additionalParameter,
             ),
           ),
         );

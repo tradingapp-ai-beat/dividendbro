@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'chatgpt_response_screen.dart';
-import 'image_selection_screen.dart';
+import 'questions_screen2.dart'; // Import the new screen
 
 class QuestionsScreen extends StatefulWidget {
   final List<String> subscribedTimeFrames;
@@ -25,7 +23,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     "Swing Trading",
     "Mean Reversion",
     "Pairs Trading",
-    "Give me your best Beat!"
+    "Leave it to dividendBeat!",
   ];
 
   String? selectedStrategy;
@@ -40,11 +38,11 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     });
   }
 
-  void _navigateToImageSelection() {
+  void _navigateToNextQuestion() {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => ImageSelectionScreen(
+        builder: (context) => QuestionsScreen2(
           subscribedTimeFrames: widget.subscribedTimeFrames,
           name: widget.name,
           selectedStrategy: selectedStrategy,
@@ -127,7 +125,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                 SizedBox(height: 20),
                 Center(
                   child: ElevatedButton(
-                    onPressed: selectedStrategy != null ? _navigateToImageSelection : null,
+                    onPressed: selectedStrategy != null ? _navigateToNextQuestion : null,
                     child: Text('OK'),
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 15.0),

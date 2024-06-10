@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/network_service.dart';
-//import 'network_service.dart'; // Ensure the correct path to the network_service.dart file
 import '../provider/user_provider.dart';
-import 'image_selection_screen.dart';
+import 'questions_screen.dart'; // Import the QuestionsScreen
 import 'sign_up_screen.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -25,7 +24,7 @@ class _SignInScreenState extends State<SignInScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => ImageSelectionScreen(
+          builder: (context) => QuestionsScreen(
             subscribedTimeFrames: userProvider.user.timeFrames ?? [],
             name: userProvider.user.name ?? '',
           ),
