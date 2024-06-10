@@ -166,10 +166,10 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
             onPressed: () => _showUploadOptions(context),
             icon: SvgPicture.asset(
               'assets/beat.svg',
-              height: 30,
-              width: 30,
+              height: 50,
+              width: 50,
             ),
-            label: Text('Select Image'),
+            label: Text('Select your Chart'),
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
               shape: RoundedRectangleBorder(

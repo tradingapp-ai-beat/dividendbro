@@ -46,7 +46,7 @@ class SubscriptionScreen extends StatelessWidget {
                             },
                           ),
                           ListTile(
-                            title: Text('Beat 3 - 29.99€ / month'),
+                            title: Text('Beat 3 - 49.99€ / month'),
                             onTap: () {
                               _choosePlan(context, 3, ['1m', '5m', '15m', '30m', '1h', '4h', '1d', '1w']);
                             },

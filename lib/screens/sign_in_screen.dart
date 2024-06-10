@@ -147,7 +147,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     SizedBox(height: 20),
                     Text(
-                      'Welcome!  ...dividendBeat AI is on the House!',
+                      'dividendBeat AI is on the House!',
                       style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
