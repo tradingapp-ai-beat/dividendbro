@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:cloud_functions/cloud_functions.dart';
+import '../services/network_service.dart';
+//import 'network_service.dart'; // Ensure the correct path to the network_service.dart file
 import '../provider/user_provider.dart';
 import 'image_selection_screen.dart';
 import 'sign_up_screen.dart';
@@ -36,16 +37,12 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   Future<void> _sendPasswordResetEmail(String email) async {
-    try {
-      HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('sendPasswordResetEmail');
-      final response = await callable.call(<String, dynamic>{ 'email': email });
-      if (response.data['success']) {
-        _showSuccessDialog("Password reset email sent to $email");
-      } else {
-        _showErrorDialog("Failed to send password reset email: ${response.data['error']}");
-      }
-    } catch (e) {
-      _showErrorDialog("An error occurred while sending the password reset email.");
+    if (email.isNotEmpty) {
+      await sendPasswordResetEmail(email);
+      _showSuccessDialog('Password reset email sent successfully');
+    } else {
+      print('Email is required');
+      _showErrorDialog('Email is required');
     }
   }
 
@@ -77,7 +74,7 @@ class _SignInScreenState extends State<SignInScreen> {
               child: Text("OK"),
               onPressed: () async {
                 Navigator.of(context).pop();
-                await _sendPasswordResetEmail(_forgotPasswordEmailController.text);
+                await _sendPasswordResetEmail(_forgotPasswordEmailController.text.trim());
               },
             ),
           ],
