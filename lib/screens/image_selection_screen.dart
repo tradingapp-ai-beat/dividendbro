@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../provider/user_provider.dart';
 import '../models/user_model.dart';
+import '../services/image_service.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/top_bar.dart';
 import 'chatgpt_response_screen.dart';
@@ -55,23 +56,44 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
       String imageUrl = await userProvider.uploadImage(image);
       if (imageUrl.isNotEmpty) {
         print('Image uploaded successfully, URL: $imageUrl');
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChatGPTResponseScreen(
-              imagePath: imageUrl,
-              subscribedTimeFrames: widget.subscribedTimeFrames,
-              name: widget.name,
-              selectedStrategy: widget.selectedStrategy,
-              additionalParameter: widget.additionalParameter,
-            ),
-          ),
-        );
+        _analyzeImageAndFetchAdvice(imageUrl);
       } else {
         print('Failed to upload image');
       }
     } else {
       print('No image picked');
+    }
+  }
+
+  Future<void> _analyzeImageAndFetchAdvice(String imageUrl) async {
+    try {
+      print('Analyzing image...');
+      String analysisResponse = await getImageService().processImage(
+        imageUrl,
+        widget.selectedStrategy ?? '',
+        widget.subscribedTimeFrames,
+        widget.additionalParameter ?? '',
+      );
+      print('Analysis response: $analysisResponse');
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChatGPTResponseScreen(
+            imagePath: imageUrl,
+            subscribedTimeFrames: widget.subscribedTimeFrames,
+            name: widget.name,
+            selectedStrategy: widget.selectedStrategy,
+            additionalParameter: widget.additionalParameter,
+            analysisResponse: analysisResponse,
+          ),
+        ),
+      );
+    } catch (e) {
+      print('Error processing image: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to process image: $e')),
+      );
     }
   }
 
@@ -86,6 +108,14 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
             title: Text('Upload Image'),
             onTap: () {
               _pickImage(ImageSource.gallery);
+              Navigator.of(context).pop();
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.camera_alt),
+            title: Text('Capture Image'),
+            onTap: () {
+              _pickImage(ImageSource.camera);
               Navigator.of(context).pop();
             },
           ),

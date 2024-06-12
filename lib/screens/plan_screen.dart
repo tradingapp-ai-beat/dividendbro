@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/user_model.dart';
 import '../provider/user_provider.dart';
-import 'choose_plan_screen.dart';
 import 'subscription_screen.dart';
 
 class PlanScreen extends StatelessWidget {
@@ -40,8 +39,8 @@ class PlanScreen extends StatelessWidget {
                     SizedBox(height: 20),
                     if (user.subscriptionType != null && user.subscriptionType != 0 && !userProvider.isCanceled)
                       _buildCancelButton(context),
-                    if (userProvider.isCanceled && !userProvider.isSubscriptionStillActive)
-                      _buildSubscribeButton(context),
+                    if (userProvider.isTrialPeriodActive || userProvider.isCanceled)
+                      _buildSubscribeButton(context, userProvider),
                   ],
                 ),
               ),
@@ -50,6 +49,22 @@ class PlanScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  bool _isSubscriptionActive(DateTime? cancellationDate) {
+    if (cancellationDate == null) {
+      return true;
+    }
+    final expirationDate = cancellationDate.add(Duration(days: 30));
+    return DateTime.now().isBefore(expirationDate);
+  }
+
+  bool _shouldShowSubscribeButton(DateTime? cancellationDate) {
+    if (cancellationDate == null) {
+      return false;
+    }
+    final showSubscribeDate = cancellationDate.add(Duration(days: 29));
+    return DateTime.now().isAfter(showSubscribeDate) && DateTime.now().isBefore(showSubscribeDate.add(Duration(days: 1)));
   }
 
   Widget _buildSubscriptionDetails(UserProvider userProvider, UserModel user) {
@@ -131,13 +146,17 @@ class PlanScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSubscribeButton(BuildContext context) {
+  Widget _buildSubscribeButton(BuildContext context, UserProvider userProvider) {
     return ElevatedButton(
       onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => SubscriptionScreen()),
-        );
+        if (userProvider.isTrialPeriodActive) {
+          _showTrialPeriodMessage(context);
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SubscriptionScreen()),
+          );
+        }
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.blue.shade50,
@@ -149,14 +168,34 @@ class PlanScreen extends StatelessWidget {
     );
   }
 
+  void _showTrialPeriodMessage(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Free Trial Period'),
+          content: Text('You are currently on a free trial period. You will be notified to pay for a subscription after 14 days.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   String _getPlanName(int? subscriptionType) {
     switch (subscriptionType) {
       case 0:
-        return 'Free Subscription';
+        return 'Free-trial Subscription';
       case 1:
-        return 'One Beat Time Frame';
+        return '1 Beat Time Frame';
       case 2:
-        return 'Two Beats Time Frames';
+        return '3 Beats Time Frames';
       case 3:
         return 'Unlimited Beats Time Frames';
       default:

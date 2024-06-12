@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+//import 'package:trading_advice_app_v2/screens/image_selection_dummy_screan.dart';
 import 'chatgpt_response_screen.dart';
 import 'image_selection_screen.dart';
 
@@ -15,10 +16,10 @@ class QuestionsScreen2 extends StatefulWidget {
 
 class _QuestionsScreen2State extends State<QuestionsScreen2> {
   List<String> options = [
-    "2% rule",
+    "1:2",
     "1:3",
     "1:4",
-    "1.5",
+    "1:5",
     "Leave it to dividendBeat",
   ];
 

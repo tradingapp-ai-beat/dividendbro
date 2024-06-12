@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../provider/user_provider.dart';
 import '../models/user_model.dart';
+import '../services/image_service.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/top_bar.dart';
 import 'history_screen.dart';
@@ -18,6 +19,7 @@ class ChatGPTResponseScreen extends StatefulWidget {
   final String name;
   final String? selectedStrategy;
   final String? additionalParameter;
+  final String analysisResponse;
 
   ChatGPTResponseScreen({
     required this.imagePath,
@@ -25,6 +27,7 @@ class ChatGPTResponseScreen extends StatefulWidget {
     required this.name,
     this.selectedStrategy,
     this.additionalParameter,
+    required this.analysisResponse,
   });
 
   @override
@@ -44,27 +47,31 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
 
   Future<void> _processImage() async {
     try {
-      // Simulate a dummy response from ChatGPT
-      String response = 'This is a dummy response from ChatGPT for your trading chart.';
+      print('Processing image...');
+      String response = await getImageService().processImage(
+        widget.imagePath,
+        widget.selectedStrategy ?? '',
+        widget.subscribedTimeFrames,
+        widget.additionalParameter ?? '',
+      );
 
-      // Use the image URL directly
-      String imageUrl = widget.imagePath;
+      print('Image processed, received response: $response');
 
       setState(() {
         _response = response;
         _isLoading = false;
       });
 
-      // Save history with timestamp and image URL
       Provider.of<UserProvider>(context, listen: false).addHistoryEntry(
         HistoryEntry(
-          imagePath: imageUrl,
+          imagePath: widget.imagePath,
           response: _response,
           timestamp: DateTime.now(),
-          imageUrl: imageUrl,
+          imageUrl: widget.imagePath,
         ),
       );
     } catch (e) {
+      print('Error processing image: $e');
       setState(() {
         _response = 'Failed to process image: ${e.toString()}';
         _isLoading = false;
@@ -84,7 +91,6 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
@@ -102,7 +108,7 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
                 child: Column(
                   children: <Widget>[
                     Text(
-                      'Your available timeframes: ${widget.subscribedTimeFrames.join(', ')}',
+                      'Your available time frames: ${widget.subscribedTimeFrames.join(', ')}',
                       style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
@@ -223,14 +229,6 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
               Navigator.of(context).pop();
             },
           ),
-          ListTile(
-            leading: Icon(Icons.camera_alt),
-            title: Text('Capture Image'),
-            onTap: () {
-              _pickImage(ImageSource.camera);
-              Navigator.of(context).pop();
-            },
-          ),
         ],
       ),
     );
@@ -261,6 +259,7 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
               name: widget.name,
               selectedStrategy: widget.selectedStrategy,
               additionalParameter: widget.additionalParameter,
+              analysisResponse: '',
             ),
           ),
         );

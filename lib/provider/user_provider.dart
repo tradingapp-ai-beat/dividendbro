@@ -22,6 +22,7 @@ class UserProvider with ChangeNotifier {
     isFreeTrial: false,
     signupDate: DateTime.now(),
     uid: '', // Initialize uid
+    isPaidSubscription: false, // Initialize with default value
   );
 
   UserModel get user => _user;
@@ -33,18 +34,21 @@ class UserProvider with ChangeNotifier {
       final activeUntil = _user.cancellationDate!.add(Duration(days: 30));
       return DateTime.now().isBefore(activeUntil);
     }
-    if (_user.subscriptionType != null && _user.subscriptionType != 0) {
+    if (_user.isPaidSubscription) {
       return true;
     } else if (_user.isFreeTrial) {
-      final trialEndDate = _user.signupDate.add(Duration(days: 30));
+      final trialEndDate = _user.signupDate.add(Duration(days: 14));
       return DateTime.now().isBefore(trialEndDate);
     }
     return false;
   }
 
   bool get isTrialPeriodActive {
-    final trialEndDate = _user.signupDate.add(Duration(days: 30));
-    return DateTime.now().isBefore(trialEndDate);
+    if (_user.isFreeTrial) {
+      final trialEndDate = _user.signupDate.add(Duration(days: 14));
+      return DateTime.now().isBefore(trialEndDate);
+    }
+    return false;
   }
 
   bool get isCanceled => _user.isCanceled;
@@ -79,6 +83,7 @@ class UserProvider with ChangeNotifier {
     }
 
     newUser.isFreeTrial = newUser.subscriptionType == 0;
+    newUser.isPaidSubscription = newUser.subscriptionType != 0; // Set isPaidSubscription
     newUser.signupDate = DateTime.now();
     await _firestore.collection('users').doc(newUser.email).set(newUser.toJson());
     _user = newUser;
@@ -119,17 +124,19 @@ class UserProvider with ChangeNotifier {
 
   Future<void> updateSubscription(int subscriptionType, List<String> timeFrames) async {
     if (_user != null) {
-      if (isTrialPeriodActive) {
+      if (isTrialPeriodActive && subscriptionType == 0) {
         return;
       }
 
       _user.subscriptionType = subscriptionType;
       _user.timeFrames = timeFrames;
+      _user.isPaidSubscription = subscriptionType != 0; // Update isPaidSubscription
 
       await _firestore.collection('users').doc(_user.email).update({
         'subscriptionType': _user.subscriptionType,
         'timeFrames': _user.timeFrames,
         'isFreeTrial': _user.isFreeTrial,
+        'isPaidSubscription': _user.isPaidSubscription, // Update Firestore
         'signupDate': _user.signupDate.toIso8601String(),
       });
       notifyListeners();
