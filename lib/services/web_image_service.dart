@@ -21,7 +21,7 @@ class WebImageService implements ImageService {
     print('Extracted timeframe: $extractedTimeframe');
 
     if (extractedTimeframe == null || extractedTimeframe.isEmpty) {
-      return 'The uploaded chart image does not contain clear information. Please upload a better-quality image with more detail.';
+      return 'The uploaded chart image does not contain enough clear or relevant information. Please upload a better-quality image or a image with more with more important information, like indicators visible, values visible.';
     }
 
     if (!timeframes.contains(extractedTimeframe)) {

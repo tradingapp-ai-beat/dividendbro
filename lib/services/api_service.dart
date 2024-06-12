@@ -54,7 +54,6 @@ class ApiService {
     }
   }
 
-
   static String extractTimeframe(String text) {
     RegExp regex = RegExp(r'(\d+m|\d+h|\d+d|\d+w|\d+min)');
     Match? match = regex.firstMatch(text);

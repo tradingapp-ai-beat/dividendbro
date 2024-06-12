@@ -13,21 +13,8 @@ class MobileImageService implements ImageService {
     print('Timeframes: $timeframes');
     print('Additional Parameter: $additionalParameter');
 
-    // Download the image from the URL
-    final response = await http.get(Uri.parse(imageUrl));
-    print('Download response status: ${response.statusCode}');
-    if (response.statusCode != 200) {
-      throw Exception('Failed to download image');
-    }
-
-    // Save the image to a temporary file
-    final tempDir = Directory.systemTemp;
-    final tempFile = File('${tempDir.path}/temp_image.jpg');
-    await tempFile.writeAsBytes(response.bodyBytes);
-    print('Image saved to temp file: ${tempFile.path}');
-
-    // Analyze the original image
-    print('Analyzing image...');
+    // Analyze the image from URL
+    print('Analyzing image from URL...');
     Map<String, String> analysisResult = await ApiService.analyzeImageFromUrl(imageUrl);
     print('Analysis result: $analysisResult');
 
@@ -39,25 +26,15 @@ class MobileImageService implements ImageService {
     print('Extracted timeframe: $extractedTimeframe');
 
     if (extractedTimeframe == null || extractedTimeframe.isEmpty) {
-      return 'The uploaded chart image does not contain clear information. Please upload a better-quality image with more detail.';
+      return 'The uploaded chart image does not contain enough clear or relevant information. Please upload a better-quality image or a image with more with more important information, like indicators visible, values visible.';
     }
 
     if (!timeframes.contains(extractedTimeframe)) {
       return 'The time frame of the uploaded chart is $extractedTimeframe which is not in your subscription plan. Please upgrade your plan.';
     }
 
-    // Resize and compress the image for base64 encoding
-    img.Image? image = img.decodeImage(tempFile.readAsBytesSync());
-    if (image == null) {
-      throw Exception('Failed to decode image');
-    }
-    img.Image resizedImage = img.copyResize(image, width: 800);
-    List<int> resizedBytes = img.encodeJpg(resizedImage, quality: 70);
-    String base64Image = base64Encode(resizedBytes);
-    print('Base64 Image length: ${base64Image.length}');
-
-    // Get trading advice from the image
-    print('Getting advice from image...');
-    return await ApiService.getAdviceFromImage(base64Image, strategy, timeframes, additionalParameter);
+    // Get trading advice from the image URL
+    print('Getting advice from image URL...');
+    return await ApiService.getAdviceFromImage(imageUrl, strategy, timeframes, additionalParameter);
   }
 }
