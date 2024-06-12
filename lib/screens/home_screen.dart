@@ -49,7 +49,7 @@ class HomeScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ChatGPTResponseScreen(imagePath: '', subscribedTimeFrames: [], name: '',),
+                    builder: (context) => ChatGPTResponseScreen(imagePath: '', subscribedTimeFrames: [], name: '', analysisResponse: '',),
                   ),
                 );
               },

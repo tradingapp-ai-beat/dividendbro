@@ -1,99 +1,220 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../models/user_model.dart';
 import '../provider/user_provider.dart';
+import 'payment_screen.dart';
 
-class SubscriptionScreen extends StatelessWidget {
+class SubscriptionScreen extends StatefulWidget {
+  @override
+  _SubscriptionScreenState createState() => _SubscriptionScreenState();
+}
+
+class _SubscriptionScreenState extends State<SubscriptionScreen> {
+  int _selectedSubscriptionType = 0;
+  List<String> _selectedTimeFrames = [];
+
+  Future<void> _subscribe() async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    try {
+      // Update the user's subscription details
+      await userProvider.updateSubscription(_selectedSubscriptionType, _selectedTimeFrames);
+      print("Subscription updated successfully.");
+
+      // Navigate to the payment screen if a paid plan is selected
+      if (_selectedSubscriptionType != 0) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PaymentScreen(
+              subscriptionType: _selectedSubscriptionType,
+              timeFrames: _selectedTimeFrames,
+              email: userProvider.user.email,
+              name: userProvider.user.name,
+            ),
+          ),
+        );
+      } else {
+        Navigator.pop(context); // Just go back if no paid plan is selected
+      }
+    } catch (e) {
+      print("Error during subscription: $e");
+      _showErrorDialog(e.toString());
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Error"),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildSubscriptionOptions() {
+    return Column(
+      children: [
+        _buildSubscriptionCard(
+          title: 'Beat 1',
+          price: '9.99€ / month',
+          description: 'Choose 1 Beat time frame',
+          subscriptionType: 1,
+          maxSelections: 1,
+        ),
+        _buildSubscriptionCard(
+          title: 'Beat 2',
+          price: '19.99€ / month',
+          description: 'Choose 3 Beats time frames',
+          subscriptionType: 2,
+          maxSelections: 3,
+        ),
+        _buildSubscriptionCard(
+          title: 'Beat 3',
+          price: '49.99€ / month',
+          description: 'Unlimited Beats time frames',
+          subscriptionType: 3,
+          maxSelections: 8,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSubscriptionCard({
+    required String title,
+    required String price,
+    required String description,
+    required int subscriptionType,
+    required int maxSelections,
+  }) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: ExpansionTile(
+        title: Text(
+          title,
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(price, style: TextStyle(color: Colors.green)),
+            Text(description, style: TextStyle(fontSize: 14.0)),
+          ],
+        ),
+        onExpansionChanged: (bool expanded) {
+          if (expanded && _selectedSubscriptionType != subscriptionType) {
+            setState(() {
+              _selectedSubscriptionType = subscriptionType;
+              _selectedTimeFrames = [];
+            });
+          }
+        },
+        children: [
+          ListTile(
+            title: Text(description),
+            trailing: Radio<int>(
+              value: subscriptionType,
+              groupValue: _selectedSubscriptionType,
+              onChanged: (int? value) {
+                setState(() {
+                  _selectedSubscriptionType = value!;
+                  _selectedTimeFrames = [];
+                });
+              },
+            ),
+          ),
+          if (_selectedSubscriptionType == subscriptionType)
+            _buildTimeFrameSelector(maxSelections),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimeFrameSelector(int maxSelections) {
+    final timeFrames = ['1m', '5m', '15m', '30m', '1h', '4h', '1d', '1w'];
+    return Column(
+      children: timeFrames.map((timeFrame) {
+        return CheckboxListTile(
+          title: Text(timeFrame),
+          value: _selectedTimeFrames.contains(timeFrame),
+          onChanged: (bool? value) {
+            if (value == true && _selectedTimeFrames.length < maxSelections) {
+              setState(() {
+                _selectedTimeFrames.add(timeFrame);
+              });
+            } else if (value == false) {
+              setState(() {
+                _selectedTimeFrames.remove(timeFrame);
+              });
+            }
+          },
+        );
+      }).toList(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context);
-    final user = userProvider.user;
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('Subscription Plans'),
+        title: Text('Select a Plan'),
+        automaticallyImplyLeading: false, // Hide the back arrow
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous screen
+          },
+        ),
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           bool isMobile = constraints.maxWidth < 600;
-
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(16.0),
             child: Center(
               child: ConstrainedBox(
                 constraints: BoxConstraints(maxWidth: 800),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    if (userProvider.isTrialPeriodActive)
-                      Text(
-                        'You are currently on a free trial period. You will be notified to pay for a subscription after 14 days.',
-                        style: TextStyle(color: Colors.green),
-                        textAlign: TextAlign.center,
+                    Text(
+                      'Choose a Subscription Plan',
+                      style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 10),
+                    _buildSubscriptionOptions(),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: _subscribe,
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 15.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        textStyle: TextStyle(fontSize: 16.0),
                       ),
-                    if (!userProvider.isTrialPeriodActive)
-                      Column(
-                        children: [
-                          ListTile(
-                            title: Text('Beat 1 - 9.99€ / month'),
-                            onTap: () {
-                              _choosePlan(context, 1, ['1m']);
-                            },
-                          ),
-                          ListTile(
-                            title: Text('Beat 2 - 19.99€ / month'),
-                            onTap: () {
-                              _choosePlan(context, 2, ['1m', '5m']);
-                            },
-                          ),
-                          ListTile(
-                            title: Text('Beat 3 - 49.99€ / month'),
-                            onTap: () {
-                              _choosePlan(context, 3, ['1m', '5m', '15m', '30m', '1h', '4h', '1d', '1w']);
-                            },
-                          ),
-                        ],
-                      ),
-                    if (!userProvider.isTrialPeriodActive)
-                      ListTile(
-                        title: Text('Cancel Plan'),
-                        onTap: () {
-                          _confirmCancelPlan(context, userProvider);
-                        },
-                      ),
+                      child: Text('Subscribe'),
+                    ),
                   ],
                 ),
               ),
             ),
           );
         },
-      ),
-    );
-  }
-
-  void _choosePlan(BuildContext context, int subscriptionType, List<String> timeFrames) {
-    Provider.of<UserProvider>(context, listen: false).updateSubscription(subscriptionType, timeFrames);
-    Navigator.pop(context);
-  }
-
-  void _confirmCancelPlan(BuildContext context, UserProvider userProvider) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Confirm Cancel Subscription'),
-        content: Text('Are you sure you want to cancel your subscription?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('No'),
-          ),
-          TextButton(
-            onPressed: () {
-              userProvider.cancelSubscription();
-              Navigator.of(context).pop();
-            },
-            child: Text('Yes'),
-          ),
-        ],
       ),
     );
   }

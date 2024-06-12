@@ -51,10 +51,11 @@ class UserModel {
   List<String> timeFrames;
   List<HistoryEntry> history;
   bool isFreeTrial;
+  bool isPaidSubscription; // New field
   DateTime signupDate;
-  String uid; // Add the uid field
-  bool isCanceled;
   DateTime? cancellationDate;
+  bool isCanceled;
+  String uid;
 
   UserModel({
     required this.email,
@@ -64,11 +65,13 @@ class UserModel {
     required this.history,
     required this.isFreeTrial,
     required this.signupDate,
-    required this.uid, // Add the uid parameter
-    this.isCanceled = false,
     this.cancellationDate,
+    this.isCanceled = false,
+    required this.uid,
+    this.isPaidSubscription = false, // Initialize with default value
   });
 
+  // Update the toJson and fromJson methods to include isPaidSubscription
   Map<String, dynamic> toJson() {
     return {
       'email': email,
@@ -77,25 +80,27 @@ class UserModel {
       'timeFrames': timeFrames,
       'history': history.map((e) => e.toJson()).toList(),
       'isFreeTrial': isFreeTrial,
+      'isPaidSubscription': isPaidSubscription, // Include in JSON
       'signupDate': signupDate.toIso8601String(),
-      'uid': uid, // Add the uid parameter
-      'isCanceled': isCanceled,
       'cancellationDate': cancellationDate?.toIso8601String(),
+      'isCanceled': isCanceled,
+      'uid': uid,
     };
   }
 
-  factory UserModel.fromJson(Map<String, dynamic> json) {
+  static UserModel fromJson(Map<String, dynamic> json) {
     return UserModel(
       email: json['email'],
       name: json['name'],
       subscriptionType: json['subscriptionType'],
       timeFrames: List<String>.from(json['timeFrames']),
-      history: List<HistoryEntry>.from(json['history'].map((e) => HistoryEntry.fromJson(e))),
+      history: (json['history'] as List).map((e) => HistoryEntry.fromJson(e)).toList(),
       isFreeTrial: json['isFreeTrial'],
+      isPaidSubscription: json['isPaidSubscription'] ?? false, // Read from JSON
       signupDate: DateTime.parse(json['signupDate']),
-      uid: json['uid'], // Add the uid parameter
-      isCanceled: json['isCanceled'] ?? false,
       cancellationDate: json['cancellationDate'] != null ? DateTime.parse(json['cancellationDate']) : null,
+      isCanceled: json['isCanceled'],
+      uid: json['uid'],
     );
   }
 }

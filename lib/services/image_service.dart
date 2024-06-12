@@ -1,28 +1,14 @@
-import 'dart:convert';
-import 'dart:io';
-import 'api_service.dart';
+import 'web_image_service.dart' if (dart.library.html) 'web_image_service.dart';
+import 'mobile_image_service.dart' if (dart.library.io) 'mobile_image_service.dart';
 
-class ImageService {
-  static Future<String> processImage(String imagePath, String strategy, List<String> timeframes) async {
-    File imageFile = File(imagePath);
-    String base64Image = base64Encode(imageFile.readAsBytesSync());
+abstract class ImageService {
+  Future<String> processImage(String imageUrl, String strategy, List<String> timeframes, String additionalParameter);
+}
 
-    Map<String, String> analysisResult = await ApiService.analyzeImage(base64Image);
-
-    if (analysisResult['isChart'] == 'false') {
-      return 'The uploaded image is not a trading chart. Please upload a valid trading chart image.';
-    }
-
-    String? extractedTimeframe = analysisResult['timeframe'];
-
-    if (extractedTimeframe == null || extractedTimeframe.isEmpty) {
-      return 'The uploaded chart image does not contain clear information. Please upload a better-quality image with more detail.';
-    }
-
-    if (!timeframes.contains(extractedTimeframe)) {
-      return 'The timeframe of the uploaded chart is $extractedTimeframe which is not in your subscription plan. Please upgrade your plan.';
-    }
-
-    return await ApiService.getAdviceFromImage(base64Image, strategy, timeframes);
+ImageService getImageService() {
+  if (Uri.base.scheme == 'http' || Uri.base.scheme == 'https') {
+    return WebImageService();
+  } else {
+    return MobileImageService();
   }
 }
