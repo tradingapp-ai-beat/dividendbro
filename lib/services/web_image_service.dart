@@ -13,22 +13,35 @@ class WebImageService implements ImageService {
     Map<String, String> analysisResult = await ApiService.analyzeImageFromUrl(imageUrl);
     print('Analysis result: $analysisResult');
 
-    if (analysisResult['isChart'] == 'false') {
+    bool isChart = analysisResult['isChart'] == 'true';
+    String? extractedTimeframe = analysisResult['timeframe']?.toLowerCase();
+    print('Extracted timeframe: $extractedTimeframe');
+
+    if (!isChart) {
       return 'The uploaded image is not a trading chart. Please upload a valid trading chart image.';
     }
 
-    String? extractedTimeframe = analysisResult['timeframe'];
-    print('Extracted timeframe: $extractedTimeframe');
-
     if (extractedTimeframe == null || extractedTimeframe.isEmpty) {
-      return 'The uploaded chart image does not contain enough clear or relevant information. Please upload a better-quality image or a image with more with more important information, like indicators visible, values visible.';
+      return 'The uploaded chart image does not contain clear information. Please upload a better-quality image with more detail.';
     }
 
-    if (!timeframes.contains(extractedTimeframe)) {
+    // Normalize the timeframes for comparison
+    Set<String> normalizedTimeframes = timeframes
+        .map((t) => t.toLowerCase())
+        .expand((t) => [
+      t,
+      t.replaceAllMapped(RegExp(r'(\d+)([a-z]+)', caseSensitive: false), (Match m) => '${m[2]}${m[1]}'),
+      t.replaceAllMapped(RegExp(r'([a-z]+)(\d+)', caseSensitive: false), (Match m) => '${m[2]}${m[1]}')
+    ])
+        .toSet();
+
+    print('Possible timeframes for comparison: $normalizedTimeframes');
+
+    if (!normalizedTimeframes.contains(extractedTimeframe)) {
       return 'The time frame of the uploaded chart is $extractedTimeframe which is not in your subscription plan. Please upgrade your plan.';
     }
 
     print('Getting advice from image URL...');
-    return await ApiService.getAdviceFromImage(imageUrl, strategy, timeframes, additionalParameter);
+    return await ApiService.getAdviceFromImage(imageUrl, strategy, timeframes, additionalParameter, extractedTimeframe);
   }
 }
