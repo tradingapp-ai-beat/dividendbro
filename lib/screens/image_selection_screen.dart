@@ -111,6 +111,7 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
               Navigator.of(context).pop();
             },
           ),
+          /*
           ListTile(
             leading: Icon(Icons.camera_alt),
             title: Text('Capture Image'),
@@ -119,6 +120,8 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
               Navigator.of(context).pop();
             },
           ),
+
+           */
         ],
       ),
     );
@@ -193,7 +196,7 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
                         height: 30,
                         width: 30,
                       ),
-                      label: Text('Select Image'),
+                      label: Text('Select Chart'),
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
                         shape: RoundedRectangleBorder(

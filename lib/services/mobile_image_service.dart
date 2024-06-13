@@ -28,11 +28,10 @@ class MobileImageService implements ImageService {
         .map((t) => t.toLowerCase())
         .expand((t) => [
       t,
-      t.replaceAllMapped(RegExp(r'(\d+)([a-z]+)', caseSensitive: false), (Match m) => '${m[2]}${m[1]}'),
-      t.replaceAllMapped(RegExp(r'([a-z]+)(\d+)', caseSensitive: false), (Match m) => '${m[2]}${m[1]}')
+      t.replaceAllMapped(RegExp(r'(\d+)([a-z]+|m|mn)', caseSensitive: false), (Match m) => '${m[2]}${m[1]}'),
+      t.replaceAllMapped(RegExp(r'([a-z]+|m|mn)(\d+)', caseSensitive: false), (Match m) => '${m[2]}${m[1]}')
     ])
         .toSet();
-
     print('Possible timeframes for comparison: $normalizedTimeframes');
 
     if (!normalizedTimeframes.contains(extractedTimeframe)) {

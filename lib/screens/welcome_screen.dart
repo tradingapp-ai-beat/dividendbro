@@ -57,7 +57,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         ),
                         SizedBox(height: 20),
                         const Text(
-                          'No more endless time consuming analysing trading charts, NO setups need, with just 1 or 3 simple clicks, simply and fastly enhance your trading strategy with confidence and keep track of all your trades analysis, dividendBeat is your AI-powered personal trading advisor. Empowering you to make informed decisions in a blink of an eye and optimize your trading strategies for financial success. ',
+                          'Simplify your trading with DividendBeat, your AI-powered advisor. Make informed decisions instantly and optimize your trades effortlessly, unlike anything else.',
                           style: TextStyle(
                             fontFamily: 'RobotoMono',
                             fontSize: 18,

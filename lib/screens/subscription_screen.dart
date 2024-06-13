@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/user_model.dart';
 import '../provider/user_provider.dart';
 import 'payment_screen.dart';
 
@@ -15,31 +14,23 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   Future<void> _subscribe() async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    try {
-      // Update the user's subscription details
-      await userProvider.updateSubscription(_selectedSubscriptionType, _selectedTimeFrames);
-      print("Subscription updated successfully.");
 
-      // Navigate to the payment screen if a paid plan is selected
-      if (_selectedSubscriptionType != 0) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PaymentScreen(
-              subscriptionType: _selectedSubscriptionType,
-              timeFrames: _selectedTimeFrames,
-              email: userProvider.user.email,
-              name: userProvider.user.name,
-            ),
-          ),
-        );
-      } else {
-        Navigator.pop(context); // Just go back if no paid plan is selected
-      }
-    } catch (e) {
-      print("Error during subscription: $e");
-      _showErrorDialog(e.toString());
+    if (_selectedSubscriptionType == 0) {
+      _selectedTimeFrames = ['15m'];
     }
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PaymentScreen(
+          subscriptionType: _selectedSubscriptionType,
+          timeFrames: _selectedTimeFrames,
+          email: userProvider.user.email,
+          name: userProvider.user.name,
+          previousScreen: 'subscription', isSignUp: false,
+        ),
+      ),
+    );
   }
 
   void _showErrorDialog(String message) {
@@ -145,7 +136,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Widget _buildTimeFrameSelector(int maxSelections) {
-    final timeFrames = ['1m', '5m', '15m', '30m', '1h', '4h', '1d', '1w'];
+    final timeFrames = ['1m','2m', '5m', '15m', '30m', '1h', '2h', '4h', '5h', '1d', '1w', 'M'];
     return Column(
       children: timeFrames.map((timeFrame) {
         return CheckboxListTile(

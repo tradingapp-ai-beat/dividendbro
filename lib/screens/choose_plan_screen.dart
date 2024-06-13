@@ -161,7 +161,7 @@ class _ChoosePlanScreenState extends State<ChoosePlanScreen> {
   }
 
   Widget _buildTimeFrameSelector(int maxSelections) {
-    final timeFrames = ['1m', '5m', '15m', '30m', '1h', '4h', '1d', '1w'];
+    final timeFrames = ['1m', '5m', '15m', '30m', '1h', '4h', '1d', '1w', 'M'];
     return Column(
       children: timeFrames.map((timeFrame) {
         return CheckboxListTile(

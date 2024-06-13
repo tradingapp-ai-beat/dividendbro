@@ -1,19 +1,126 @@
 import 'package:flutter/material.dart';
-import 'package:trading_advice_app_v2/screens/questions_screen.dart';
-import '../widgets/top_bar.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:trading_advice_app_v2/screens/image_selection_screen.dart';
+import '../models/user_model.dart';
+import '../provider/user_provider.dart';
+import 'questions_screen.dart';
+import 'sign_up_screen.dart';
+import 'subscription_screen.dart';
 
 class PaymentScreen extends StatelessWidget {
   final int subscriptionType;
   final List<String> timeFrames;
   final String email;
   final String name;
+  final String? password; // Add password field for sign-up
+  final String previousScreen; // Indicate the previous screen
 
-  PaymentScreen({required this.subscriptionType, required this.timeFrames, required this.email, required this.name});
+  PaymentScreen({
+    required this.subscriptionType,
+    required this.timeFrames,
+    required this.email,
+    required this.name,
+    this.password, // Make password optional
+    required this.previousScreen, required bool isSignUp,
+  });
+
+  Future<void> _completePayment(BuildContext context) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    if (password != null) {
+      // Sign up process
+      try {
+        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: email,
+          password: password!,
+        );
+
+        UserModel newUser = UserModel(
+          uid: userCredential.user!.uid,
+          email: email,
+          name: name,
+          subscriptionType: subscriptionType,
+          timeFrames: timeFrames,
+          signupDate: DateTime.now(),
+          isFreeTrial: subscriptionType == 0,
+          history: [],
+          isCanceled: false,
+          cancellationDate: null,
+        );
+
+        await userProvider.signUp(newUser);
+        print("User signed up and data saved to Firestore.");
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => QuestionsScreen(
+              subscribedTimeFrames: timeFrames,
+              name: name,
+            ),
+          ),
+        );
+      } catch (e) {
+        print("Error during sign-up: $e");
+        _showErrorDialog(context, e.toString());
+      }
+    } else {
+      // Subscription update process
+      try {
+        await userProvider.updateSubscription(subscriptionType, timeFrames);
+        print("Subscription updated successfully.");
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => previousScreen == 'subscription'
+                ? SubscriptionScreen()
+                : QuestionsScreen(
+              subscribedTimeFrames: timeFrames,
+              name: name,
+            ),
+          ),
+        );
+      } catch (e) {
+        print("Error during subscription update: $e");
+        _showErrorDialog(context, e.toString());
+      }
+    }
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Error"),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: TopBar(name: name), // Use your custom TopBar widget
+      appBar: AppBar(
+        title: Text('Payment'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context); // Go back to the previous screen
+          },
+        ),
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -56,18 +163,7 @@ class PaymentScreen extends StatelessWidget {
                     SizedBox(height: 20),
                     Center(
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => QuestionsScreen(
-                                subscribedTimeFrames: timeFrames,
-                                name: name,
-                              ),
-                            ),
-                                (route) => false,
-                          );
-                        },
+                        onPressed: () => _completePayment(context),
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 15.0),
                           shape: RoundedRectangleBorder(
