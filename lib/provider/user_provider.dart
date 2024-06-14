@@ -71,6 +71,23 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+  bool isTimeFrameInSubscription(String timeframe) {
+    // Normalize the user's subscribed timeframes
+    Set<String> normalizedTimeframes = _user.timeFrames
+        .map((t) => t.toLowerCase())
+        .expand((t) => [
+      t,
+      t.replaceAllMapped(RegExp(r'(\d+)([a-z]+)', caseSensitive: false), (Match m) => '${m[2]}${m[1]}')
+    ])
+        .toSet();
+
+    // Normalize the extracted timeframe
+    String normalizedExtractedTimeframe = timeframe.replaceAllMapped(
+        RegExp(r'(\d+)([a-z]+)', caseSensitive: false), (Match m) => '${m[2]}${m[1]}');
+
+    return normalizedTimeframes.contains(normalizedExtractedTimeframe);
+  }
+
   Future<void> signUp(UserModel newUser) async {
     final usedEmailDoc = await _firestore.collection('usedFreeTrialEmails').doc(newUser.email).get();
     if (usedEmailDoc.exists && newUser.subscriptionType == 0) {

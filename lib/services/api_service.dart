@@ -19,7 +19,7 @@ class ApiService {
           ],
         },
       ],
-      'max_tokens': 1050,
+      'max_tokens': 2500,
     });
 
     print('Sending analyzeImageFromUrl request: $requestBody');
@@ -39,6 +39,7 @@ class ApiService {
       if (response.statusCode == 200) {
         var responseData = json.decode(response.body);
         String text = responseData['choices'][0]['message']['content'];
+        print('Analysis text content: $text');
         bool isChart = text.contains('trading chart');
         String timeframe = extractTimeframe(text);
         print('Matched timeframe: $timeframe');
@@ -56,19 +57,27 @@ class ApiService {
   }
 
   static String extractTimeframe(String text) {
-    RegExp regex = RegExp(r'(\d+m|\d+h|\d+d|\d+w|\d+min|m\d+|h\d+|d\d+|w\d+|mn|m)', caseSensitive: false);
+    print('Input text for regex: $text');
+
+    // Updated regex to handle various formats including quotes and punctuation
+    RegExp regex = RegExp(r'(\d+[mhdwM]|[mhdwM]\d+|mn|m|d|h|w)', caseSensitive: false);
     Match? match = regex.firstMatch(text);
+
     if (match != null) {
-      String matched = match.group(0)!.toLowerCase();
+      String matched = match.group(1)!.toLowerCase();
       print('Matched timeframe: $matched');
+
       // Normalize the format to always have the letter first and the number second
-      if (RegExp(r'\d+[mhdw]').hasMatch(matched)) {
-        return matched.replaceAllMapped(RegExp(r'(\d+)([a-z]+)', caseSensitive: false), (Match m) => '${m[2]}${m[1]}');
+      if (RegExp(r'^\d+[mhdwM]$').hasMatch(matched)) {
+        String normalized = matched.replaceAllMapped(RegExp(r'(\d+)([mhdwM])', caseSensitive: false), (Match m) => '${m[2]}${m[1]}');
+        print('Normalized timeframe: $normalized');
+        return normalized;
       }
+      print('Returned as-is: $matched');
       return matched;
     } else {
       print('No timeframe matched.');
-      return '';
+      return ''; // Ensure a non-null value is returned
     }
   }
 
@@ -82,13 +91,13 @@ class ApiService {
             {'type': 'text', 'text': 'Give trading advice based on this chart image and strategy.'},
             {
               'type': 'text',
-              'text': 'Strategy: $strategy\nTime frames: $timeframes\nAdditional parameter: $additionalParameter\nExtracted timeframe: $extractedTimeframe\nImage URL: $imageUrl',
+              'text': 'Give trading advice based on this chart image,strategy: $strategy. adapted to Time frames: $extractedTimeframe and additional parameter: $additionalParameter.,Image URL: $imageUrl are you more inclined to buy or to sell? Give me full analysis of the chart, give me advice about leverage when applicable (appropriate leverage give example with possible outcomes in one example for 0.1 leverage) and finalize with information regarding safety in trading and risk management. Also, extract the financial product name and verify if the image time frame corresponds to the timeframe on the picture.',
             },
             {'type': 'image_url', 'image_url': {'url': imageUrl}}, // Including the image URL again
           ],
         },
       ],
-      'max_tokens': 1050,
+      'max_tokens': 2500,
     });
 
     print('Sending getAdviceFromImage request: $requestBody');

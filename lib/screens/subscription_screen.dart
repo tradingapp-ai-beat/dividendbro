@@ -75,7 +75,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           price: '49.99€ / month',
           description: 'Unlimited Beats time frames',
           subscriptionType: 3,
-          maxSelections: 8,
+          maxSelections: 12,
         ),
       ],
     );

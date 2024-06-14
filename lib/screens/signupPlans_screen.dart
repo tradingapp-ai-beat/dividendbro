@@ -69,7 +69,7 @@ class _SignUpPlansScreenState extends State<SignUpPlansScreen> {
           price: '49.99€ / month',
           description: 'Unlimited Beats time frames',
           subscriptionType: 3,
-          maxSelections: 8,
+          maxSelections: 12,
         ),
       ],
     );
@@ -130,7 +130,7 @@ class _SignUpPlansScreenState extends State<SignUpPlansScreen> {
   }
 
   Widget _buildTimeFrameSelector(int maxSelections) {
-    final timeFrames = ['1m', '5m', '15m', '30m', '1h', '4h', '1d', '1w', 'M'];
+    final timeFrames = ['1m','2m', '5m', '15m', '30m', '1h', '2h', '4h', '5h', '1d', '1w', 'M'];
     return Column(
       children: timeFrames.map((timeFrame) {
         return CheckboxListTile(
