@@ -133,15 +133,14 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
       MaterialPageRoute(
         builder: (context) => QuestionsScreen(
           subscribedTimeFrames: widget.subscribedTimeFrames,
-          name: widget.name,
+          name: widget.name, previousScreen: '',
         ),
       ),
     );
   }
 
   void _logout(BuildContext context) {
-    Provider.of<UserProvider>(context, listen: false).logout();
-    Navigator.of(context).pushReplacementNamed('/login');
+    Provider.of<UserProvider>(context, listen: false).logout(context);
   }
 
   @override

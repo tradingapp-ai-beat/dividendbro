@@ -4,8 +4,9 @@ import 'questions_screen2.dart'; // Import the new screen
 class QuestionsScreen extends StatefulWidget {
   final List<String> subscribedTimeFrames;
   final String name;
+  final String previousScreen; // Add this line
 
-  QuestionsScreen({required this.subscribedTimeFrames, required this.name});
+  QuestionsScreen({required this.subscribedTimeFrames, required this.name, required this.previousScreen});
 
   @override
   _QuestionsScreenState createState() => _QuestionsScreenState();
@@ -56,6 +57,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Questions'),
+        automaticallyImplyLeading: widget.previousScreen != 'signup' && widget.previousScreen != 'signin', // Conditionally show back arrow
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {

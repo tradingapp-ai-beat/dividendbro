@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../provider/user_provider.dart';
 import 'auth_screen.dart';
 import 'subscription_screen.dart';
-import 'sign_up_screen.dart'; // Ensure this import points to your SignUpScreen file
 
 class SettingsScreen extends StatelessWidget {
   @override
@@ -35,24 +34,15 @@ class SettingsScreen extends StatelessWidget {
                         ),
                       ),
                     if (!userProvider.isTrialPeriodActive && user.subscriptionType != null && user.subscriptionType != 0)
-                      ListTile(
-                        title: Text('Cancel Plan'),
-                        onTap: () {
-                          Provider.of<UserProvider>(context, listen: false).cancelSubscription();
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => SubscriptionScreen()),
-                          );
-                        },
-                      ),
+
                     ListTile(
-                      title: Text('Cancel Account'),
+                      title: Text('Delete Account'),
                       onTap: () async {
                         final confirm = await showDialog<bool>(
                           context: context,
                           builder: (context) => AlertDialog(
-                            title: Text('Confirm Account Cancellation'),
-                            content: Text('Are you sure you want to cancel your account? This action cannot be undone.'),
+                            title: Text('Confirm Account Deletion'),
+                            content: Text('Are you sure you want to delete your account? This action cannot be undone.'),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.of(context).pop(false),
@@ -66,11 +56,7 @@ class SettingsScreen extends StatelessWidget {
                           ),
                         );
                         if (confirm == true) {
-                          await Provider.of<UserProvider>(context, listen: false).deleteAccount();
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => SignUpScreen()),
-                          );
+                          await Provider.of<UserProvider>(context, listen: false).deleteAccount(context);
                         }
                       },
                     ),
@@ -100,6 +86,7 @@ class SettingsScreen extends StatelessWidget {
                         }
                       },
                     ),
+
                   ],
                 ),
               ),

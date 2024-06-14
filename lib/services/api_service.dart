@@ -14,7 +14,7 @@ class ApiService {
         {
           'role': 'user',
           'content': [
-            {'type': 'text', 'text': 'Analyze this image and determine if it is a trading chart. If it is, extract the timeframe and say if its minutes or minute, hours or hour, days or day, weeks or week, months or month and always say in plural .'},
+            {'type': 'text', 'text': 'Analyze this image and determine if it is a trading chart. If it is, extract the timeframe and say in plural eg. if xm you say minutes, if xh you say hours. if xd you say days, etc... alwys give answer of time frame type in plural as mentioned before. .'},
             {'type': 'image_url', 'image_url': {'url': imageUrl}},
           ],
         },

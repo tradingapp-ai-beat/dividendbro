@@ -15,7 +15,6 @@ class PaymentScreen extends StatelessWidget {
   final String name;
   final String? password; // Add password field for sign-up
   final String previousScreen; // Indicate the previous screen
-  final bool isSignUp; // Add a flag to check if it is a sign-up process
 
   PaymentScreen({
     required this.subscriptionType,
@@ -24,13 +23,13 @@ class PaymentScreen extends StatelessWidget {
     required this.name,
     this.password, // Make password optional
     required this.previousScreen,
-    required this.isSignUp,
+    required bool isSignUp,
   });
 
   Future<void> _completePayment(BuildContext context) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
-    if (isSignUp) {
+    if (password != null) {
       // Sign up process
       try {
         UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -49,6 +48,7 @@ class PaymentScreen extends StatelessWidget {
           history: [],
           isCanceled: false,
           cancellationDate: null,
+          subscriptionEndDate: DateTime.now().add(Duration(days: 30)), // Set the end date for the subscription
         );
 
         await userProvider.signUp(newUser);
@@ -57,7 +57,7 @@ class PaymentScreen extends StatelessWidget {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => QuestionsScreen(
+            builder: (context) => ImageSelectionScreen(
               subscribedTimeFrames: timeFrames,
               name: name,
             ),
@@ -76,7 +76,10 @@ class PaymentScreen extends StatelessWidget {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => ImageSelectionScreen(subscribedTimeFrames: [], name: '',),
+            builder: (context) => ImageSelectionScreen(
+              subscribedTimeFrames: timeFrames,
+              name: name,
+            ),
           ),
         );
       } catch (e) {

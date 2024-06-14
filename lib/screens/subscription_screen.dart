@@ -70,7 +70,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         _buildSubscriptionCard(
           title: 'Beat 3',
           price: '49.99€ / month',
-          description: 'Unlimited Beats time frames',
+          description: 'All Beats time frames',
           subscriptionType: 3,
           maxSelections: 5,
         ),

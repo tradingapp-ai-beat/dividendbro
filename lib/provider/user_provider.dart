@@ -1,6 +1,7 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:trading_advice_app_v2/screens/auth_screen.dart';
 import 'dart:io';
 import '../models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,7 +23,8 @@ class UserProvider with ChangeNotifier {
     isFreeTrial: false,
     signupDate: DateTime.now(),
     uid: '', // Initialize uid
-    isPaidSubscription: false, // Initialize with default value
+    isPaidSubscription: false,
+    subscriptionEndDate: DateTime.now().add(Duration(days: 30)),
   );
 
   UserModel get user => _user;
@@ -30,12 +32,11 @@ class UserProvider with ChangeNotifier {
   int? previousSubscriptionType;
 
   bool get hasActiveSubscription {
-    if (_user.isCanceled && _user.cancellationDate != null) {
-      final activeUntil = _user.cancellationDate!.add(Duration(days: 30));
-      return DateTime.now().isBefore(activeUntil);
+    if (_user.isCanceled && _user.subscriptionEndDate != null) {
+      return DateTime.now().isBefore(_user.subscriptionEndDate);
     }
     if (_user.isPaidSubscription) {
-      return true;
+      return DateTime.now().isBefore(_user.subscriptionEndDate);
     } else if (_user.isFreeTrial) {
       final trialEndDate = _user.signupDate.add(Duration(days: 14));
       return DateTime.now().isBefore(trialEndDate);
@@ -140,24 +141,21 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<void> updateSubscription(int subscriptionType, List<String> timeFrames) async {
-    if (_user != null) {
-      if (isTrialPeriodActive && subscriptionType == 0) {
-        return;
-      }
+    _user.subscriptionType = subscriptionType;
+    _user.timeFrames = timeFrames;
+    _user.subscriptionEndDate = DateTime.now().add(Duration(days: 30));
+    _user.isCanceled = false;
 
-      _user.subscriptionType = subscriptionType;
-      _user.timeFrames = timeFrames;
-      _user.isPaidSubscription = subscriptionType != 0; // Update isPaidSubscription
+    DocumentReference userDocRef = _firestore.collection('users').doc(_user.uid);
 
-      await _firestore.collection('users').doc(_user.email).update({
-        'subscriptionType': _user.subscriptionType,
-        'timeFrames': _user.timeFrames,
-        'isFreeTrial': _user.isFreeTrial,
-        'isPaidSubscription': _user.isPaidSubscription, // Update Firestore
-        'signupDate': _user.signupDate.toIso8601String(),
-      });
-      notifyListeners();
+    DocumentSnapshot userDoc = await userDocRef.get();
+    if (userDoc.exists) {
+      await userDocRef.update(_user.toJson());
+    } else {
+      throw Exception('User document does not exist.');
     }
+
+    notifyListeners();
   }
 
   Future<void> addHistoryEntry(HistoryEntry entry) async {
@@ -177,19 +175,22 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<void> cancelSubscription() async {
-    if (_user != null) {
-      previousSubscriptionType = _user.subscriptionType;
-      _user.isCanceled = true;
-      _user.cancellationDate = DateTime.now();
-      await _firestore.collection('users').doc(_user.email).update({
-        'isCanceled': true,
-        'cancellationDate': _user.cancellationDate!.toIso8601String(),
-      });
-      notifyListeners();
+    _user.isCanceled = true;
+    _user.cancellationDate = DateTime.now();
+
+    DocumentReference userDocRef = _firestore.collection('users').doc(_user.email);
+
+    DocumentSnapshot userDoc = await userDocRef.get();
+    if (userDoc.exists) {
+      await userDocRef.update(_user.toJson());
+    } else {
+      throw Exception('User document does not exist.');
     }
+
+    notifyListeners();
   }
 
-  Future<void> deleteAccount() async {
+  Future<void> deleteAccount(BuildContext context) async {
     if (_user != null) {
       await _firestore.collection('usedFreeTrialEmails').doc(_user.email).set({'used': true});
       await _firestore.collection('users').doc(_user.email).delete();
@@ -201,9 +202,16 @@ class UserProvider with ChangeNotifier {
         history: [],
         isFreeTrial: false,
         signupDate: DateTime.now(),
-        uid: '', // Initialize uid
+        uid: '',
+        subscriptionEndDate: DateTime.now(), // Initialize uid
       );
       notifyListeners();
+      // Navigate to AuthScreen
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => SignInScreen()),
+            (Route<dynamic> route) => false,
+      );
     }
   }
 
@@ -258,7 +266,7 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> logout() async {
+  Future<void> logout(BuildContext context) async {
     await _auth.signOut();
     _user = UserModel(
       email: '',
@@ -268,8 +276,14 @@ class UserProvider with ChangeNotifier {
       history: [],
       isFreeTrial: false,
       signupDate: DateTime.now(),
-      uid: '', // Initialize uid
+      uid: '',
+      subscriptionEndDate: DateTime.now(), // Initialize uid
     );
     notifyListeners();
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => SignInScreen()),
+          (Route<dynamic> route) => false,
+    );
   }
 }

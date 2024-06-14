@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/user_provider.dart';
-
-import '../screens/sign_in_screen.dart'; // Import the SignInScreen for logout navigation
+import '../screens/sign_in_screen.dart';
 
 class TopBar extends StatelessWidget implements PreferredSizeWidget {
   final String name;
@@ -23,7 +22,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         DropdownButton<String>(
           icon: Icon(Icons.more_vert, color: Colors.white),
-          items: <String>[ 'Logout'].map((String value) {
+          items: <String>['Logout'].map((String value) {
             return DropdownMenuItem<String>(
               value: value,
               child: Text(value),
@@ -57,7 +56,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
             TextButton(
               child: Text("Logout"),
               onPressed: () {
-                Provider.of<UserProvider>(context, listen: false).logout();
+                Provider.of<UserProvider>(context, listen: false).logout(context);
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => SignInScreen()),

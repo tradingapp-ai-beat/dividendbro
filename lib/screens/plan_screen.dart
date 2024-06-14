@@ -122,7 +122,7 @@ class PlanScreen extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.all(16.0),
         child: Text(
-          'Your plan was canceled and will be active until ${userProvider.user.cancellationDate!.add(Duration(days: 1)).toLocal().toString().split(' ')[0]}',
+          'Your subscription plan was canceled but you will have access to all the features until ${userProvider.user.subscriptionEndDate!.toLocal().toString().split(' ')[0]}',
           style: TextStyle(
             fontFamily: 'RobotoMono',
             fontSize: 16,
@@ -195,7 +195,7 @@ class PlanScreen extends StatelessWidget {
       case 1:
         return '1 Beat Time Frame';
       case 2:
-        return '3 Beats Time Frames';
+        return '2 Beats Time Frames';
       case 3:
         return 'Unlimited Beats Time Frames';
       default:

@@ -40,7 +40,7 @@ class MainScreen extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (context) => QuestionsScreen(
                               subscribedTimeFrames: [],
-                              name: user.name,
+                              name: user.name, previousScreen: '',
                             ),
                           ),
                         );

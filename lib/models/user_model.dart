@@ -51,11 +51,12 @@ class UserModel {
   List<String> timeFrames;
   List<HistoryEntry> history;
   bool isFreeTrial;
-  bool isPaidSubscription; // New field
+  bool isPaidSubscription;
   DateTime signupDate;
   DateTime? cancellationDate;
   bool isCanceled;
   String uid;
+  DateTime subscriptionEndDate;
 
   UserModel({
     required this.email,
@@ -68,10 +69,11 @@ class UserModel {
     this.cancellationDate,
     this.isCanceled = false,
     required this.uid,
-    this.isPaidSubscription = false, // Initialize with default value
+    required this.subscriptionEndDate,
+    this.isPaidSubscription = false,
   });
 
-  // Update the toJson and fromJson methods to include isPaidSubscription
+  // Convert UserModel instance to JSON
   Map<String, dynamic> toJson() {
     return {
       'email': email,
@@ -80,14 +82,16 @@ class UserModel {
       'timeFrames': timeFrames,
       'history': history.map((e) => e.toJson()).toList(),
       'isFreeTrial': isFreeTrial,
-      'isPaidSubscription': isPaidSubscription, // Include in JSON
+      'isPaidSubscription': isPaidSubscription,
       'signupDate': signupDate.toIso8601String(),
       'cancellationDate': cancellationDate?.toIso8601String(),
       'isCanceled': isCanceled,
       'uid': uid,
+      'subscriptionEndDate': subscriptionEndDate.toIso8601String(),
     };
   }
 
+  // Create UserModel instance from JSON
   static UserModel fromJson(Map<String, dynamic> json) {
     return UserModel(
       email: json['email'],
@@ -96,11 +100,12 @@ class UserModel {
       timeFrames: List<String>.from(json['timeFrames']),
       history: (json['history'] as List).map((e) => HistoryEntry.fromJson(e)).toList(),
       isFreeTrial: json['isFreeTrial'],
-      isPaidSubscription: json['isPaidSubscription'] ?? false, // Read from JSON
+      isPaidSubscription: json['isPaidSubscription'] ?? false,
       signupDate: DateTime.parse(json['signupDate']),
       cancellationDate: json['cancellationDate'] != null ? DateTime.parse(json['cancellationDate']) : null,
       isCanceled: json['isCanceled'],
       uid: json['uid'],
+      subscriptionEndDate: DateTime.parse(json['subscriptionEndDate']),
     );
   }
 }

@@ -26,7 +26,7 @@ class _SignInScreenState extends State<SignInScreen> {
         MaterialPageRoute(
           builder: (context) => QuestionsScreen(
             subscribedTimeFrames: userProvider.user.timeFrames ?? [],
-            name: userProvider.user.name ?? '',
+            name: userProvider.user.name ?? '', previousScreen: '',
           ),
         ),
       );

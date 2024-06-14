@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:trading_advice_app_v2/screens/disclaimer_screen.dart';
-import 'package:trading_advice_app_v2/screens/privacy_screen.dart';
 import '../provider/user_provider.dart';
 import '../screens/profile_screen.dart';
 import '../screens/settings_screen.dart';
 import '../screens/plan_screen.dart';
 import '../screens/history_screen.dart';
 import '../screens/sign_in_screen.dart';
+import '../screens/disclaimer_screen.dart';
+import '../screens/privacy_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -81,7 +81,7 @@ class AppDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.info),
+            leading: Icon(Icons.privacy_tip),
             title: Text('Privacy Policy'),
             onTap: () {
               Navigator.push(
@@ -119,11 +119,8 @@ class AppDrawer extends StatelessWidget {
             TextButton(
               child: Text('Logout'),
               onPressed: () {
-                Provider.of<UserProvider>(context, listen: false).logout();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => SignInScreen()),
-                );
+                Navigator.of(context).pop(); // Close the dialog before logging out
+                Provider.of<UserProvider>(context, listen: false).logout(context);
               },
             ),
           ],

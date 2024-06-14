@@ -85,7 +85,7 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
       MaterialPageRoute(
         builder: (context) => QuestionsScreen(
           subscribedTimeFrames: widget.subscribedTimeFrames,
-          name: widget.name,
+          name: widget.name, previousScreen: '',
         ),
       ),
     );
