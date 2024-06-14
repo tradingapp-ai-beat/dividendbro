@@ -15,10 +15,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   Future<void> _subscribe() async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
-    if (_selectedSubscriptionType == 0) {
-      _selectedTimeFrames = ['minutes'];
-    }
-
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
