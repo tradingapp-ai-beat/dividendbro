@@ -16,7 +16,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
     if (_selectedSubscriptionType == 0) {
-      _selectedTimeFrames = ['15m'];
+      _selectedTimeFrames = ['15 minutes'];
     }
 
     Navigator.pushReplacement(
@@ -27,7 +27,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           timeFrames: _selectedTimeFrames,
           email: userProvider.user.email,
           name: userProvider.user.name,
-          previousScreen: 'subscription', isSignUp: false,
+          previousScreen: 'subscription',
+          isSignUp: false,
         ),
       ),
     );
@@ -136,7 +137,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Widget _buildTimeFrameSelector(int maxSelections) {
-    final timeFrames = ['1m','2m', '5m', '15m', '30m', '1h', '2h', '4h', '5h', '1d', '1w', 'M'];
+    final timeFrames = ['minutes', 'hours', 'days', 'weeks', 'months'];
     return Column(
       children: timeFrames.map((timeFrame) {
         return CheckboxListTile(

@@ -14,7 +14,7 @@ class ApiService {
         {
           'role': 'user',
           'content': [
-            {'type': 'text', 'text': 'Analyze this image and determine if it is a trading chart. If it is, extract the timeframe.'},
+            {'type': 'text', 'text': 'Analyze this image and determine if it is a trading chart. If it is, extract the timeframe and say if its minutes or minute, hours or hour, days or day, weeks or week, months or month and always say in plural .'},
             {'type': 'image_url', 'image_url': {'url': imageUrl}},
           ],
         },
@@ -60,20 +60,12 @@ class ApiService {
     print('Input text for regex: $text');
 
     // Updated regex to handle various formats including quotes and punctuation
-    RegExp regex = RegExp(r'(\d+[mhdwM]|[mhdwM]\d+|mn|m|d|h|w)', caseSensitive: false);
+    RegExp regex = RegExp(r'(minutes|hours|days|weeks|months)', caseSensitive: false);
     Match? match = regex.firstMatch(text);
 
     if (match != null) {
       String matched = match.group(1)!.toLowerCase();
       print('Matched timeframe: $matched');
-
-      // Normalize the format to always have the letter first and the number second
-      if (RegExp(r'^\d+[mhdwM]$').hasMatch(matched)) {
-        String normalized = matched.replaceAllMapped(RegExp(r'(\d+)([mhdwM])', caseSensitive: false), (Match m) => '${m[2]}${m[1]}');
-        print('Normalized timeframe: $normalized');
-        return normalized;
-      }
-      print('Returned as-is: $matched');
       return matched;
     } else {
       print('No timeframe matched.');
@@ -91,7 +83,7 @@ class ApiService {
             {'type': 'text', 'text': 'Give trading advice based on this chart image and strategy.'},
             {
               'type': 'text',
-              'text': 'Give trading advice based on this chart image,strategy: $strategy. adapted to Time frames: $extractedTimeframe and additional parameter: $additionalParameter.,Image URL: $imageUrl are you more inclined to buy or to sell? Give me full analysis of the chart, give me advice about leverage when applicable (appropriate leverage give example with possible outcomes in one example for 0.1 leverage) and finalize with information regarding safety in trading and risk management. Also, extract the financial product name and verify if the image time frame corresponds to the timeframe on the picture.',
+              'text': 'Give trading advice based on this chart image,strategy: $strategy., extract the financial product name and give an judge opinion on what the strategy chosen is good or not for the type of financial product, adapted to Time frames: $extractedTimeframe and additional parameter: $additionalParameter.,Image URL: $imageUrl are you more inclined to buy or to sell? Analise candle sticks if possible, and inform about the pattern, Give user full analysis of the chart, give me advice about leverage when applicable, and finalize with information regarding safety in trading and risk management. .',
             },
             {'type': 'image_url', 'image_url': {'url': imageUrl}}, // Including the image URL again
           ],

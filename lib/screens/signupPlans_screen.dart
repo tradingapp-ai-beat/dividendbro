@@ -22,7 +22,7 @@ class _SignUpPlansScreenState extends State<SignUpPlansScreen> {
 
   void _subscribe() {
     if (_selectedSubscriptionType == 0) {
-      _selectedTimeFrames = ['15m'];
+      _selectedTimeFrames = ['15 minutes'];
     }
 
     Navigator.push(
@@ -34,7 +34,8 @@ class _SignUpPlansScreenState extends State<SignUpPlansScreen> {
           email: widget.email,
           name: widget.name,
           password: widget.password, // Pass the password for sign up
-          isSignUp: true, previousScreen: '', // Indicate that this is a sign-up process
+          isSignUp: true,
+          previousScreen: '', // Indicate that this is a sign-up process
         ),
       ),
     );
@@ -62,14 +63,14 @@ class _SignUpPlansScreenState extends State<SignUpPlansScreen> {
           price: '19.99€ / month',
           description: 'Choose 3 Beats time frames',
           subscriptionType: 2,
-          maxSelections: 3,
+          maxSelections: 2,
         ),
         _buildSubscriptionCard(
           title: 'Beat 3',
           price: '49.99€ / month',
           description: 'Unlimited Beats time frames',
           subscriptionType: 3,
-          maxSelections: 12,
+          maxSelections: 5,
         ),
       ],
     );
@@ -130,7 +131,7 @@ class _SignUpPlansScreenState extends State<SignUpPlansScreen> {
   }
 
   Widget _buildTimeFrameSelector(int maxSelections) {
-    final timeFrames = ['1m','2m', '5m', '15m', '30m', '1h', '2h', '4h', '5h', '1d', '1w', 'M'];
+    final timeFrames = ['minutes', 'hours', 'days', 'weeks', 'months'];
     return Column(
       children: timeFrames.map((timeFrame) {
         return CheckboxListTile(
