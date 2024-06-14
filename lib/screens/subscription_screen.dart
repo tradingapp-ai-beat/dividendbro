@@ -16,7 +16,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
     if (_selectedSubscriptionType == 0) {
-      _selectedTimeFrames = ['15 minutes'];
+      _selectedTimeFrames = ['minutes'];
     }
 
     Navigator.pushReplacement(
@@ -67,16 +67,16 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         _buildSubscriptionCard(
           title: 'Beat 2',
           price: '19.99€ / month',
-          description: 'Choose 3 Beats time frames',
+          description: 'Choose 2 Beats time frames',
           subscriptionType: 2,
-          maxSelections: 3,
+          maxSelections: 2,
         ),
         _buildSubscriptionCard(
           title: 'Beat 3',
           price: '49.99€ / month',
           description: 'Unlimited Beats time frames',
           subscriptionType: 3,
-          maxSelections: 12,
+          maxSelections: 5,
         ),
       ],
     );

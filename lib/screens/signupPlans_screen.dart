@@ -21,8 +21,10 @@ class _SignUpPlansScreenState extends State<SignUpPlansScreen> {
   List<String> _selectedTimeFrames = [];
 
   void _subscribe() {
-    if (_selectedSubscriptionType == 0) {
-      _selectedTimeFrames = ['15 minutes'];
+    // Ensure at least one time frame is selected for the free plan
+    if (_selectedSubscriptionType == 0 && _selectedTimeFrames.isEmpty) {
+      _showErrorDialog("Please select at least one time frame.");
+      return;
     }
 
     Navigator.push(
@@ -41,13 +43,33 @@ class _SignUpPlansScreenState extends State<SignUpPlansScreen> {
     );
   }
 
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Error"),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildSubscriptionOptions() {
     return Column(
       children: [
         _buildSubscriptionCard(
           title: 'Free Trial',
           price: '0.00€ / 14 days',
-          description: '15 minutes Beats time frame',
+          description: 'Choose 1 Beat time frame',
           subscriptionType: 0,
           maxSelections: 1,
         ),
@@ -61,7 +83,7 @@ class _SignUpPlansScreenState extends State<SignUpPlansScreen> {
         _buildSubscriptionCard(
           title: 'Beat 2',
           price: '19.99€ / month',
-          description: 'Choose 3 Beats time frames',
+          description: 'Choose 2 Beats time frames',
           subscriptionType: 2,
           maxSelections: 2,
         ),
