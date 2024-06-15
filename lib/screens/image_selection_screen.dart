@@ -139,9 +139,7 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
     );
   }
 
-  void _logout(BuildContext context) {
-    Provider.of<UserProvider>(context, listen: false).logout(context);
-  }
+
 
   @override
   Widget build(BuildContext context) {

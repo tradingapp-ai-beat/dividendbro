@@ -119,8 +119,11 @@ class AppDrawer extends StatelessWidget {
             TextButton(
               child: Text('Logout'),
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog before logging out
-                Provider.of<UserProvider>(context, listen: false).logout(context);
+                Provider.of<UserProvider>(context, listen: false);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => SignInScreen()),
+                );
               },
             ),
           ],

@@ -53,7 +53,7 @@ class _QuestionsScreen2State extends State<QuestionsScreen2> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Further Questions'),
+        title: Text('Questions part 2'),
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -64,12 +64,12 @@ class _QuestionsScreen2State extends State<QuestionsScreen2> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  'Additional Parameters for DividendBeat',
+                  'Additional Questions for DividendBeat',
                   style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 20),
                 Text(
-                  'Choose an additional parameter for better analysis:',
+                  'Choose the investing ratio for your trades:',
                   style: TextStyle(fontSize: 18.0),
                 ),
                 SizedBox(height: 10),
@@ -144,14 +144,14 @@ class _QuestionsScreen2State extends State<QuestionsScreen2> {
 
   String _getOptionDescription(String option) {
     switch (option) {
-      case "2% rule":
-        return "This rule suggests that you should never risk more than 2% of your total trading capital on a single trade.";
+      case "1:2":
+        return "A risk/reward ratio of 1:2 means you aim to make three times the amount you are risking.";
       case "1:3":
         return "A risk/reward ratio of 1:3 means you aim to make three times the amount you are risking.";
       case "1:4":
         return "A risk/reward ratio of 1:4 means you aim to make four times the amount you are risking.";
-      case "1.5":
-        return "A risk/reward ratio of 1:1.5 means you aim to make one and a half times the amount you are risking.";
+      case "1:5":
+        return "A risk/reward ratio of 1:5 means you aim to make four times the amount you are risking.";
       default:
         return "The AI will choose the best parameter based on the uploaded photo.";
     }

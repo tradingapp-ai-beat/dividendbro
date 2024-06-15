@@ -146,7 +146,7 @@ class UserProvider with ChangeNotifier {
     _user.subscriptionEndDate = DateTime.now().add(Duration(days: 30));
     _user.isCanceled = false;
 
-    DocumentReference userDocRef = _firestore.collection('users').doc(_user.uid);
+    DocumentReference userDocRef = _firestore.collection('users').doc(_user.email);
 
     DocumentSnapshot userDoc = await userDocRef.get();
     if (userDoc.exists) {

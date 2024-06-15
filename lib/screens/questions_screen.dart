@@ -14,17 +14,11 @@ class QuestionsScreen extends StatefulWidget {
 
 class _QuestionsScreenState extends State<QuestionsScreen> {
   List<String> strategies = [
-    "Moving Average Crossover",
-    "Support and Resistance Trading",
-    "Trend Following",
-    "Breakout Trading",
-    "Reversal Trading",
-    "Momentum Trading",
-    "Scalping",
-    "Swing Trading",
-    "Mean Reversion",
-    "Pairs Trading",
-    "Leave it to dividendBeat!",
+    "Day Trading - Short-term time frames",
+    "Scalping - Short-term time frames ",
+    "Swing Trading - Short/medium-term time frames ",
+    "Position trading - Long-term time frames",
+    "I dont know, leave it to dividendBeat!",
   ];
 
   String? selectedStrategy;
@@ -68,7 +62,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  'Welcome to DividendBeat',
+                  'Welcome to dividendBeat',
                   style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 20),

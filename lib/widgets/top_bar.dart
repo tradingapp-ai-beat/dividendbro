@@ -54,9 +54,9 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
               },
             ),
             TextButton(
-              child: Text("Logout"),
+              child: Text('Logout'),
               onPressed: () {
-                Provider.of<UserProvider>(context, listen: false).logout(context);
+                Provider.of<UserProvider>(context, listen: false);
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => SignInScreen()),
