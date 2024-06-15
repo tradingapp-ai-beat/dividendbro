@@ -1,6 +1,5 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-//import 'package:trading_advice_app_v2/screens/image_selection_dummy_screan.dart';
-import 'chatgpt_response_screen.dart';
 import 'image_selection_screen.dart';
 
 class QuestionsScreen2 extends StatefulWidget {
@@ -8,7 +7,11 @@ class QuestionsScreen2 extends StatefulWidget {
   final String name;
   final String? selectedStrategy;
 
-  QuestionsScreen2({required this.subscribedTimeFrames, required this.name, this.selectedStrategy});
+  QuestionsScreen2({
+    required this.subscribedTimeFrames,
+    required this.name,
+    this.selectedStrategy,
+  });
 
   @override
   _QuestionsScreen2State createState() => _QuestionsScreen2State();
@@ -20,7 +23,7 @@ class _QuestionsScreen2State extends State<QuestionsScreen2> {
     "1:3",
     "1:4",
     "1:5",
-    "Leave it to dividendBeat",
+    "I don't know, leave it to AI best approach!",
   ];
 
   String? selectedOption;
@@ -53,7 +56,7 @@ class _QuestionsScreen2State extends State<QuestionsScreen2> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Questions part 2'),
+        title: Text(''),
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -64,20 +67,20 @@ class _QuestionsScreen2State extends State<QuestionsScreen2> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  'Additional Questions for DividendBeat',
+                  '',
                   style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 20),
                 Text(
                   'Choose the investing ratio for your trades:',
-                  style: TextStyle(fontSize: 18.0),
+                  style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 10),
                 Expanded(
                   child: GridView.builder(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: isWideScreen ? 3 : 2,
-                      childAspectRatio: 3,
+                      childAspectRatio: isWideScreen ? 3 : 2,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
                     ),
@@ -102,17 +105,24 @@ class _QuestionsScreen2State extends State<QuestionsScreen2> {
                         onTap: () => toggleSelection(options[index]),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: selectedOption == options[index] ? Colors.blue.withOpacity(0.5) : Colors.transparent,
-                            border: Border.all(color: Colors.blue),
+                            color: selectedOption == options[index]
+                                ? Colors.black.withOpacity(0.5)
+                                : Colors.transparent,
+                            border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                           child: Center(
-                            child: Text(
+                            child: AutoSizeText(
                               options[index],
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontWeight: selectedOption == options[index] ? FontWeight.bold : FontWeight.normal,
+                                fontWeight: selectedOption == options[index]
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
                               ),
+                              minFontSize: 10,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
@@ -145,13 +155,13 @@ class _QuestionsScreen2State extends State<QuestionsScreen2> {
   String _getOptionDescription(String option) {
     switch (option) {
       case "1:2":
-        return "A risk/reward ratio of 1:2 means you aim to make three times the amount you are risking.";
+        return "A risk/reward ratio of 1:2 means you aim to make two times the amount you are risking.";
       case "1:3":
         return "A risk/reward ratio of 1:3 means you aim to make three times the amount you are risking.";
       case "1:4":
         return "A risk/reward ratio of 1:4 means you aim to make four times the amount you are risking.";
       case "1:5":
-        return "A risk/reward ratio of 1:5 means you aim to make four times the amount you are risking.";
+        return "A risk/reward ratio of 1:5 means you aim to make five times the amount you are risking.";
       default:
         return "The AI will choose the best parameter based on the uploaded photo.";
     }

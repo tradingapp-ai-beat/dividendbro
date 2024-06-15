@@ -13,6 +13,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   List<String> _selectedTimeFrames = [];
 
   Future<void> _subscribe() async {
+    if ((_selectedSubscriptionType == 1 && _selectedTimeFrames.length != 1) ||
+        (_selectedSubscriptionType == 2 && _selectedTimeFrames.length != 2)) {
+      _showErrorDialog("Please select the correct number of time frames.");
+      return;
+    }
+
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
     Navigator.pushReplacement(
@@ -20,7 +26,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       MaterialPageRoute(
         builder: (context) => PaymentScreen(
           subscriptionType: _selectedSubscriptionType,
-          timeFrames: _selectedTimeFrames,
+          timeFrames: _selectedSubscriptionType == 3 ? ['all'] : _selectedTimeFrames,
           email: userProvider.user.email,
           name: userProvider.user.name,
           previousScreen: 'subscription',
@@ -70,7 +76,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         _buildSubscriptionCard(
           title: 'Beat 3',
           price: '49.99€ / month',
-          description: 'All Beats time frames',
+          description: 'Choose all Beats time frames',
           subscriptionType: 3,
           maxSelections: 5,
         ),

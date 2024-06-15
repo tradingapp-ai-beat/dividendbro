@@ -166,17 +166,17 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
                     ),
                     SizedBox(height: 30),
                     Text(
-                      'Instructions',
+                      'Let´s start!',
                       style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 10),
                     Text(
-                      'PRO Tip - dividendBeat recommends using RSI, MACD, EMA 20, EMA 50, EMA 200 and Bollinger Bands to make informed decisions and maximize your trading potential.\n'
-                          '1. Capture and upload an image of your trading chart.\n'
-                          '2. Our system will analyze the chart and provide the best trading insights.\n'
-                          '3. Follow the given instructions to make more informed trading decisions.',
-                      style: TextStyle(fontSize: 16.0),
+                      'PRO Tip - dividendBeat recommends using **RSI, MACD, EMA 20, EMA 50, EMA 200, Bollinger Bands** or other indicators to help dividendBeat create informed decisions to help you maximize your trading potential.\n\n'
+                          '**1. Capture and upload an image of your trading chart.**\n\n'
+                          '**2. dividenBeat will analyze the chart and provide the best trading insights.**\n\n'
+                          '**3. Leave emotions aside. Follow the given instructions to make more informed trading decisions.**',
+                      style: TextStyle(fontSize: 16.0, height: 1.5), // height for line spacing
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 30),

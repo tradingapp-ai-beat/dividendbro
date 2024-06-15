@@ -77,7 +77,7 @@ class PlanScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Your DividendBeat Plan:',
+              'Your dividendBeat Plan:',
               style: TextStyle(
                 fontFamily: 'RobotoMono',
                 fontSize: 18,
@@ -159,7 +159,7 @@ class PlanScreen extends StatelessWidget {
         }
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blue.shade50,
+        backgroundColor: Colors.black54,
         padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 15.0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         textStyle: TextStyle(fontFamily: 'RobotoMono', fontSize: 16),
