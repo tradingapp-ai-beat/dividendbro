@@ -17,13 +17,18 @@ class SignUpPlansScreen extends StatefulWidget {
 }
 
 class _SignUpPlansScreenState extends State<SignUpPlansScreen> {
-  int _selectedSubscriptionType = 0;
+  int? _selectedSubscriptionType;
   List<String> _selectedTimeFrames = [];
 
   Future<void> _subscribe() async {
+    if (_selectedSubscriptionType == null) {
+      _showErrorDialog("Please select a subscription plan.");
+      return;
+    }
+
     if ((_selectedSubscriptionType == 1 && _selectedTimeFrames.length != 1) ||
-        (_selectedSubscriptionType == 2 && _selectedTimeFrames.length != 2)||
-        (_selectedSubscriptionType == 3 && _selectedTimeFrames.length != 5)){
+        (_selectedSubscriptionType == 2 && _selectedTimeFrames.length != 2) ||
+        (_selectedSubscriptionType == 3 && _selectedTimeFrames.length != 5)) {
       _showErrorDialog("Please select the correct number of time frames.");
       return;
     }
@@ -32,7 +37,7 @@ class _SignUpPlansScreenState extends State<SignUpPlansScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => PaymentScreen(
-          subscriptionType: _selectedSubscriptionType,
+          subscriptionType: _selectedSubscriptionType!,
           timeFrames: _selectedTimeFrames,
           email: widget.email,
           name: widget.name,

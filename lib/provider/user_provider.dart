@@ -78,7 +78,8 @@ class UserProvider with ChangeNotifier {
         .map((t) => t.toLowerCase())
         .expand((t) => [
       t,
-      t.replaceAllMapped(RegExp(r'(\d+)([a-z]+)', caseSensitive: false), (Match m) => '${m[2]}${m[1]}')
+      t.replaceAllMapped(
+          RegExp(r'(\d+)([a-z]+)', caseSensitive: false), (Match m) => '${m[2]}${m[1]}')
     ])
         .toSet();
 
@@ -114,6 +115,11 @@ class UserProvider with ChangeNotifier {
       DocumentSnapshot userDoc = await _firestore.collection('users').doc(email).get();
       if (userDoc.exists) {
         _user = UserModel.fromJson(userDoc.data() as Map<String, dynamic>);
+
+        // Parse the history
+        List<dynamic> historyJson = userDoc['history'] ?? [];
+        _user.history = historyJson.map((e) => HistoryEntry.fromJson(e as Map<String, dynamic>)).toList();
+
         notifyListeners();
         return true;
       }
@@ -122,6 +128,7 @@ class UserProvider with ChangeNotifier {
     }
     return false;
   }
+
 
   Future<void> updateName(String newName) async {
     _user.name = newName;

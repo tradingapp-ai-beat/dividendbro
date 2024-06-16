@@ -162,11 +162,11 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
                             style: TextStyle(fontSize: 16.0, color: Colors.black),
                           ),
                           TextSpan(
-                            text: 'RSI, MACD, EMA 20, EMA 50, EMA 200, Bollinger Bands or other indicators ',
+                            text: 'RSI, MACD, EMA 20, EMA 50, EMA 200, Bollinger Bands + other indicators in your charts images,',
                             style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.black),
                           ),
                           TextSpan(
-                            text: 'to help dividendBeat create more detailed analysis to help you maximize your trading potential.\n\n',
+                            text: 'that will help dividendBeat creating more detailed analysis to help you maximize your trading potential.\n\n',
                             style: TextStyle(fontSize: 16.0, color: Colors.black),
                           ),
                           TextSpan(

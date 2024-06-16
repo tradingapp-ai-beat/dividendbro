@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 class HistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final history = Provider.of<UserProvider>(context).user.history;
+    final history = Provider.of<UserProvider>(context).user.history.reversed.toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -17,6 +17,7 @@ class HistoryScreen extends StatelessWidget {
         itemCount: history.length,
         itemBuilder: (context, index) {
           final entry = history[index];
+          final originalIndex = history.length - 1 - index;
           return Card(
             margin: EdgeInsets.all(8.0),
             child: Column(
@@ -30,15 +31,15 @@ class HistoryScreen extends StatelessWidget {
                   title: Text(
                     entry.title.isNotEmpty
                         ? entry.title
-                        : 'Beat ${index + 1} - ${entry.timestamp.day}/${entry.timestamp.month}/${entry.timestamp.year} ${entry.timestamp.hour}:${entry.timestamp.minute.toString().padLeft(2, '0')}',
+                        : 'Beat ${history.length - index} - ${entry.timestamp.day}/${entry.timestamp.month}/${entry.timestamp.year} ${entry.timestamp.hour}:${entry.timestamp.minute.toString().padLeft(2, '0')}',
                   ),
                   subtitle: Text(entry.response, maxLines: 2, overflow: TextOverflow.ellipsis),
                   trailing: PopupMenuButton<String>(
                     onSelected: (String result) {
                       if (result == 'change_name') {
-                        _showChangeNameDialog(context, entry, index);
+                        _showChangeNameDialog(context, entry, originalIndex);
                       } else if (result == 'delete') {
-                        _showDeleteConfirmationDialog(context, index);
+                        _showDeleteConfirmationDialog(context, originalIndex);
                       }
                     },
                     itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -56,7 +57,7 @@ class HistoryScreen extends StatelessWidget {
                     _showDetailDialog(context, entry);
                   },
                 ),
-                _buildRatingRow(context, entry, index),
+                _buildRatingRow(context, entry, originalIndex),
               ],
             ),
           );
@@ -125,9 +126,10 @@ class HistoryScreen extends StatelessWidget {
   }
 
   void _showChangeNameDialog(BuildContext context, HistoryEntry entry, int index) {
-    final TextEditingController _controller = TextEditingController(text: entry.title.isNotEmpty
-        ? entry.title
-        : 'Beat ${index + 1} - ${entry.timestamp.day}/${entry.timestamp.month}/${entry.timestamp.year} ${entry.timestamp.hour}:${entry.timestamp.minute.toString().padLeft(2, '0')}');
+    final TextEditingController _controller = TextEditingController(
+        text: entry.title.isNotEmpty
+            ? entry.title
+            : 'Beat ${index + 1} - ${entry.timestamp.day}/${entry.timestamp.month}/${entry.timestamp.year} ${entry.timestamp.hour}:${entry.timestamp.minute.toString().padLeft(2, '0')}');
 
     showDialog(
       context: context,
