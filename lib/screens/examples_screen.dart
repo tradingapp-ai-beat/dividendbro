@@ -5,11 +5,19 @@ class ExamplesScreen extends StatelessWidget {
   final List<String> mobileImages = [
     'assets/mobile1.png',
     'assets/mobile2.png',
+    'assets/mobile_1.png',
+    'assets/mobile_2.png',
+    'assets/mobile_3.png',
   ];
 
   final List<String> webImages = [
     'assets/web1.png',
     'assets/web2.png',
+    'assets/1m_boxes2.png',
+    'assets/2h_boxes1.png',
+    'assets/5m_boxes5.png',
+    //'assets/mm_boxes3.png',
+    'assets/m30_boxes4.png',
   ];
 
   void _navigateToImageGallery(BuildContext context, List<String> images) {

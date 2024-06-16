@@ -170,11 +170,11 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
                             style: TextStyle(fontSize: 16.0, color: Colors.black),
                           ),
                           TextSpan(
-                            text: '1. Capture and upload an image of a trading chart from any charts platform. ',
+                            text: '1. Capture and upload an image of a trading chart from any charts platform. \n\n',
                             style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.black),
                           ),
                           TextSpan(
-                            text: 'Examples (',
+                            text: 'Examples: \n',
                             style: TextStyle(fontSize: 16.0, color: Colors.black),
                           ),
                           WidgetSpan(
@@ -187,7 +187,7 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
                             ),
                           ),
                           TextSpan(
-                            text: ')\n\n',
+                            text: '\n\n',
                             style: TextStyle(fontSize: 16.0, color: Colors.black),
                           ),
                           TextSpan(
