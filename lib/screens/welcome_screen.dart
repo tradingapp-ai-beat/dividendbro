@@ -57,7 +57,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         ),
                         SizedBox(height: 20),
                         const Text(
-                          'Simplify your trading with DividendBeat, your AI-powered advisor. Make informed decisions instantly and optimize your trades effortlessly, unlike anything else.',
+                          'Simplify your trading with dividendBeat, your AI-powered charts analyst. \n\n '
+                              'Make informed decisions instantly and optimize your trades effortlessly, unlike anything else.\n\n'
+                              'Keep track of your trades, save and rate your beats, .\n\n',
                           style: TextStyle(
                             fontFamily: 'RobotoMono',
                             fontSize: 18,

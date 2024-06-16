@@ -20,11 +20,10 @@ class _SignUpPlansScreenState extends State<SignUpPlansScreen> {
   int _selectedSubscriptionType = 0;
   List<String> _selectedTimeFrames = [];
 
-  void _subscribe() {
-    // Ensure the correct number of time frames are selected
-    if ((_selectedSubscriptionType == 0 && _selectedTimeFrames.length != 1) ||
-        (_selectedSubscriptionType == 1 && _selectedTimeFrames.length != 1) ||
-        (_selectedSubscriptionType == 2 && _selectedTimeFrames.length != 2)) {
+  Future<void> _subscribe() async {
+    if ((_selectedSubscriptionType == 1 && _selectedTimeFrames.length != 1) ||
+        (_selectedSubscriptionType == 2 && _selectedTimeFrames.length != 2)||
+        (_selectedSubscriptionType == 3 && _selectedTimeFrames.length != 5)){
       _showErrorDialog("Please select the correct number of time frames.");
       return;
     }
@@ -34,7 +33,7 @@ class _SignUpPlansScreenState extends State<SignUpPlansScreen> {
       MaterialPageRoute(
         builder: (context) => PaymentScreen(
           subscriptionType: _selectedSubscriptionType,
-          timeFrames: _selectedSubscriptionType == 3 ? ['all'] : _selectedTimeFrames,
+          timeFrames: _selectedTimeFrames,
           email: widget.email,
           name: widget.name,
           password: widget.password, // Pass the password for sign up
@@ -92,7 +91,7 @@ class _SignUpPlansScreenState extends State<SignUpPlansScreen> {
         _buildSubscriptionCard(
           title: 'Beat 3',
           price: '49.99€ / month',
-          description: 'Choose all Beats time frames',
+          description: 'All Beats time frames',
           subscriptionType: 3,
           maxSelections: 5,
         ),
