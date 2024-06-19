@@ -216,16 +216,16 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<void> updateHistoryEntryRating(int index, int rating) async {
+  Future<void> updateHistoryEntryResult(int index, bool isWin) async {
     try {
-      _user.history[index].rating = rating;
+      _user.history[index].isWin = isWin;
       await _firestore.collection('users').doc(_user.email).update({
         'history': _user.history.map((e) => e.toJson()).toList(),
       });
       notifyListeners();
-      print('History entry rating updated successfully');
+      print('History entry result updated successfully');
     } catch (e) {
-      print('Error updating history entry rating: $e');
+      print('Error updating history entry result: $e');
     }
   }
 

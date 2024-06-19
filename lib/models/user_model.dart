@@ -9,6 +9,7 @@ class HistoryEntry {
   Uint8List? imageBytes;
   int rating;
   String title;
+  bool isWin;
 
   HistoryEntry({
     required this.imagePath,
@@ -18,6 +19,7 @@ class HistoryEntry {
     this.imageBytes,
     this.rating = 0,
     this.title = '',
+    this.isWin = false,
   });
 
   Map<String, dynamic> toJson() {
@@ -28,6 +30,7 @@ class HistoryEntry {
       'imageUrl': imageUrl,
       'imageBytes': imageBytes != null ? base64Encode(imageBytes!) : null,
       'rating': rating,
+      'isWin': isWin,
       'title': title,
     };
   }
@@ -40,6 +43,7 @@ class HistoryEntry {
       imageUrl: json['imageUrl'],
       imageBytes: json['imageBytes'] != null ? base64Decode(json['imageBytes']) : null,
       rating: json['rating'],
+      isWin: json['isWin'],
       title: json['title'], // Parse title from JSON
     );
   }

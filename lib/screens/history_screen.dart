@@ -57,7 +57,7 @@ class HistoryScreen extends StatelessWidget {
                     _showFullImageDialog(context, entry.imageUrl, entry.response);
                   },
                 ),
-                _buildRatingRow(context, entry, originalIndex),
+                _buildWinLossRow(context, entry, originalIndex),
               ],
             ),
           );
@@ -140,23 +140,30 @@ class HistoryScreen extends StatelessWidget {
     );
   }
 
-
-
-
-  Widget _buildRatingRow(BuildContext context, HistoryEntry entry, int index) {
+  Widget _buildWinLossRow(BuildContext context, HistoryEntry entry, int index) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(5, (starIndex) {
-        return IconButton(
-          icon: Icon(
-            starIndex < entry.rating ? Icons.star : Icons.star_border,
-            color: entry.rating >= 3 ? Colors.green : Colors.red,
-          ),
+      children: [
+        ElevatedButton(
           onPressed: () {
-            Provider.of<UserProvider>(context, listen: false).updateHistoryEntryRating(index, starIndex + 1);
+            Provider.of<UserProvider>(context, listen: false).updateHistoryEntryResult(index, true);
           },
-        );
-      }),
+          child: Text('Win'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: entry.isWin ? Colors.green : Colors.grey,
+          ),
+        ),
+        SizedBox(width: 10),
+        ElevatedButton(
+          onPressed: () {
+            Provider.of<UserProvider>(context, listen: false).updateHistoryEntryResult(index, false);
+          },
+          child: Text('Loss'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: !entry.isWin ? Colors.red : Colors.grey,
+          ),
+        ),
+      ],
     );
   }
 
