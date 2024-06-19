@@ -42,6 +42,15 @@
 
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
+
+  <script>
+  if (window.localStorage) {
+    localStorage.clear();
+  }
+  if (window.sessionStorage) {
+    sessionStorage.clear();
+  }
+</script>
 </head>
 <body>
 <script>

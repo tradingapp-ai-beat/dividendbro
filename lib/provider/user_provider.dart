@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:trading_advice_app_v2/screens/auth_screen.dart';
 import '../models/user_model.dart';
 import 'dart:html' as html;
@@ -12,6 +13,8 @@ class UserProvider with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
+  // Initialize secure storage
+  final FlutterSecureStorage secureStorage = FlutterSecureStorage();
   UserModel _user;
 
   UserProvider()
@@ -127,6 +130,11 @@ class UserProvider with ChangeNotifier {
     try {
       print('Signing in with email: $email');
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
+
+      // Clear local storage and session storage
+      html.window.localStorage.clear();
+      html.window.sessionStorage.clear();
+
       DocumentSnapshot userDoc = await _firestore.collection('users').doc(email).get();
       if (userDoc.exists) {
         _user = UserModel.fromJson(userDoc.data() as Map<String, dynamic>);
@@ -381,6 +389,11 @@ class UserProvider with ChangeNotifier {
   Future<void> logout(BuildContext context) async {
     try {
       await _auth.signOut();
+
+      // Clear secure storage
+      await secureStorage.deleteAll();
+
+      // Reset user model
       _user = UserModel(
         email: '',
         name: '',
@@ -391,19 +404,26 @@ class UserProvider with ChangeNotifier {
         signupDate: DateTime.now(),
         uid: '',
         subscriptionEndDate: DateTime.now(),
-        password: '', // Initialize uid
-        paymentDate: DateTime.now(), // Initialize paymentDate
+        password: '',
+        paymentDate: DateTime.now(),
       );
       notifyListeners();
 
+      // Clear local storage and session storage
+      html.window.localStorage.clear();
+      html.window.sessionStorage.clear();
+
+      // Force a full reload of the web page to clear any cached state.
+      html.window.location.reload();
+
+      // Navigate to AuthScreen
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => SignInScreen()),
             (Route<dynamic> route) => false,
       );
 
-      // Optionally, force a full reload of the web page to clear any cached state.
-      html.window.location.reload();
+      print('Logged out successfully');
     } catch (e) {
       print('Error logging out: $e');
     }
