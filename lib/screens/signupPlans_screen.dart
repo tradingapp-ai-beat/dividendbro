@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../models/user_model.dart';
-import '../provider/user_provider.dart';
 import 'payment_screen.dart';
 
 class SignUpPlansScreen extends StatefulWidget {
@@ -42,8 +38,7 @@ class _SignUpPlansScreenState extends State<SignUpPlansScreen> {
           email: widget.email,
           name: widget.name,
           password: widget.password, // Pass the password for sign up
-          isSignUp: true,
-          previousScreen: '', // Indicate that this is a sign-up process
+          previousScreen: 'sign_up', // Indicate that this is a sign-up process
         ),
       ),
     );
@@ -187,16 +182,9 @@ class _SignUpPlansScreenState extends State<SignUpPlansScreen> {
       appBar: AppBar(
         title: Text('Select a Plan'),
         automaticallyImplyLeading: false, // Hide the back arrow
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context); // Navigate back to the previous screen
-          },
-        ),
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          bool isMobile = constraints.maxWidth < 600;
           return SingleChildScrollView(
             padding: EdgeInsets.all(16.0),
             child: Center(

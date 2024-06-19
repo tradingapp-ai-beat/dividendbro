@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'signupPlans_screen.dart';
-import '../provider/user_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'email_verification_screen.dart'; // Import the new screen
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -15,28 +14,51 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _confirmPasswordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
 
-  void _navigateToPlansScreen() async {
-    if (_formKey.currentState!.validate()) {
-      print("Form validated successfully");
-
-      bool emailExists = await Provider.of<UserProvider>(context, listen: false)
-          .checkEmailExists(_emailController.text);
-
-      if (emailExists) {
-        print("Email already exists");
-        _showErrorDialog("Email already exists. Please use a different email.");
-      } else {
-        print("Email is available, navigating to SignUpPlansScreen");
+  Future<void> _sendVerificationEmail(User user) async {
+    try {
+      await user.sendEmailVerification().then((_) {
+        print("Verification email sent to ${user.email}");
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => SignUpPlansScreen(
+            builder: (context) => EmailVerificationScreen(
               email: _emailController.text,
               password: _passwordController.text,
               name: _nameController.text,
             ),
           ),
         );
+      }).catchError((error) {
+        print("Failed to send verification email: $error");
+        _showErrorDialog("Failed to send verification email. Please try again.");
+      });
+    } catch (e) {
+      print("Unexpected error sending verification email: $e");
+      _showErrorDialog("Unexpected error sending verification email. Please try again.");
+    }
+  }
+
+  void _signUpAndVerifyEmail() async {
+    if (_formKey.currentState!.validate()) {
+      print("Form validated successfully");
+
+      try {
+        print("Creating user with email: ${_emailController.text}");
+        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
+        User? user = userCredential.user;
+        if (user != null && !user.emailVerified) {
+          print("User created successfully: ${user.email}");
+          print("Sending verification email...");
+          await _sendVerificationEmail(user);
+        } else {
+          print("User creation failed or user already verified");
+        }
+      } catch (e) {
+        print("Failed to create user: $e");
+        _showErrorDialog(e.toString());
       }
     } else {
       print("Form validation failed");
@@ -195,7 +217,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         SizedBox(height: 20),
                         ElevatedButton(
-                          onPressed: _navigateToPlansScreen,
+                          onPressed: _signUpAndVerifyEmail,
                           style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 15.0),
                             shape: RoundedRectangleBorder(

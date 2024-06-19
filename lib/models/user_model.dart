@@ -57,6 +57,8 @@ class UserModel {
   bool isCanceled;
   String uid;
   DateTime subscriptionEndDate;
+  String password;
+  DateTime paymentDate;
 
   UserModel({
     required this.email,
@@ -71,9 +73,10 @@ class UserModel {
     required this.uid,
     required this.subscriptionEndDate,
     this.isPaidSubscription = false,
+    required this.password,
+    required this.paymentDate,
   });
 
-  // Convert UserModel instance to JSON
   Map<String, dynamic> toJson() {
     return {
       'email': email,
@@ -88,10 +91,11 @@ class UserModel {
       'isCanceled': isCanceled,
       'uid': uid,
       'subscriptionEndDate': subscriptionEndDate.toIso8601String(),
+      'password': password,
+      'paymentDate': paymentDate.toIso8601String(),
     };
   }
 
-  // Create UserModel instance from JSON
   static UserModel fromJson(Map<String, dynamic> json) {
     return UserModel(
       email: json['email'],
@@ -106,6 +110,8 @@ class UserModel {
       isCanceled: json['isCanceled'],
       uid: json['uid'],
       subscriptionEndDate: DateTime.parse(json['subscriptionEndDate']),
+      password: json['password'],
+      paymentDate: DateTime.parse(json['paymentDate']),
     );
   }
 }

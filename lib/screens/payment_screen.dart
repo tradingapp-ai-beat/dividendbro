@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:trading_advice_app_v2/screens/image_selection_screen.dart';
+import 'package:trading_advice_app_v2/screens/questions_screen.dart';
 import '../models/user_model.dart';
 import '../provider/user_provider.dart';
-import 'questions_screen.dart';
-import 'sign_up_screen.dart';
-import 'subscription_screen.dart';
+import 'image_selection_screen.dart';
 
 class PaymentScreen extends StatelessWidget {
   final int subscriptionType;
@@ -23,7 +21,6 @@ class PaymentScreen extends StatelessWidget {
     required this.name,
     this.password, // Make password optional
     required this.previousScreen,
-    required bool isSignUp,
   });
 
   Future<void> _completePayment(BuildContext context) async {
@@ -32,10 +29,15 @@ class PaymentScreen extends StatelessWidget {
     if (password != null) {
       // Sign up process
       try {
-        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: email,
           password: password!,
         );
+
+        User? user = userCredential.user;
+        if (user != null && !user.emailVerified) {
+          await user.sendEmailVerification();
+        }
 
         UserModel newUser = UserModel(
           uid: userCredential.user!.uid,
@@ -48,7 +50,9 @@ class PaymentScreen extends StatelessWidget {
           history: [],
           isCanceled: false,
           cancellationDate: null,
-          subscriptionEndDate: DateTime.now().add(Duration(days: 30)), // Set the end date for the subscription
+          subscriptionEndDate: DateTime.now().add(Duration(days: 30)),
+          password: password!,
+          paymentDate: DateTime.now(), // Set the end date for the subscription
         );
 
         await userProvider.signUp(newUser);
@@ -76,9 +80,9 @@ class PaymentScreen extends StatelessWidget {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => ImageSelectionScreen(
+            builder: (context) => QuestionsScreen(
               subscribedTimeFrames: timeFrames,
-              name: name,
+              name: name, previousScreen: '',
             ),
           ),
         );

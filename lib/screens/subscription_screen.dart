@@ -31,7 +31,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           email: userProvider.user.email,
           name: userProvider.user.name,
           previousScreen: 'subscription',
-          isSignUp: false,
+          password: '',
+          //isSignUp: false,
+
         ),
       ),
     );

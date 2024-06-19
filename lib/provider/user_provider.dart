@@ -25,6 +25,8 @@ class UserProvider with ChangeNotifier {
     uid: '', // Initialize uid
     isPaidSubscription: false,
     subscriptionEndDate: DateTime.now().add(Duration(days: 30)),
+    password: '',
+    paymentDate: DateTime.now(), // Initialize paymentDate
   );
 
   UserModel get user => _user;
@@ -91,26 +93,33 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<void> signUp(UserModel newUser) async {
-    final usedEmailDoc = await _firestore.collection('usedFreeTrialEmails').doc(newUser.email).get();
-    if (usedEmailDoc.exists && newUser.subscriptionType == 0) {
-      throw Exception('This email has already used a free trial.');
-    }
+    try {
+      final usedEmailDoc = await _firestore.collection('usedFreeTrialEmails').doc(newUser.email).get();
+      if (usedEmailDoc.exists && newUser.subscriptionType == 0) {
+        throw Exception('This email has already used a free trial.');
+      }
 
-    DocumentSnapshot userDoc = await _firestore.collection('users').doc(newUser.email).get();
-    if (userDoc.exists) {
-      throw Exception('Email already exists');
-    }
+      DocumentSnapshot userDoc = await _firestore.collection('users').doc(newUser.email).get();
+      if (userDoc.exists) {
+        throw Exception('Email already exists');
+      }
 
-    newUser.isFreeTrial = newUser.subscriptionType == 0;
-    newUser.isPaidSubscription = newUser.subscriptionType != 0; // Set isPaidSubscription
-    newUser.signupDate = DateTime.now();
-    await _firestore.collection('users').doc(newUser.email).set(newUser.toJson());
-    _user = newUser;
-    notifyListeners();
+      newUser.isFreeTrial = newUser.subscriptionType == 0;
+      newUser.isPaidSubscription = newUser.subscriptionType != 0; // Set isPaidSubscription
+      newUser.signupDate = DateTime.now();
+      await _firestore.collection('users').doc(newUser.email).set(newUser.toJson());
+      _user = newUser;
+      notifyListeners();
+      print('User signed up successfully: ${newUser.email}');
+    } catch (e) {
+      print('Error signing up: $e');
+      throw e;
+    }
   }
 
   Future<bool> signIn(String email, String password) async {
     try {
+      print('Signing in with email: $email');
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
       DocumentSnapshot userDoc = await _firestore.collection('users').doc(email).get();
       if (userDoc.exists) {
@@ -121,104 +130,149 @@ class UserProvider with ChangeNotifier {
         _user.history = historyJson.map((e) => HistoryEntry.fromJson(e as Map<String, dynamic>)).toList();
 
         notifyListeners();
+        print('User signed in successfully: $email');
         return true;
+      } else {
+        print('User document not found for email: $email');
       }
     } catch (e) {
-      print(e.toString());
+      print('Error signing in: $e');
     }
     return false;
   }
 
-
   Future<void> updateName(String newName) async {
-    _user.name = newName;
-    await _firestore.collection('users').doc(_user.email).update({'name': newName});
-    notifyListeners();
+    try {
+      _user.name = newName;
+      await _firestore.collection('users').doc(_user.email).update({'name': newName});
+      notifyListeners();
+      print('Name updated successfully to: $newName');
+    } catch (e) {
+      print('Error updating name: $e');
+    }
   }
 
   Future<void> updatePassword(String newPassword) async {
-    User? currentUser = _auth.currentUser;
-    if (currentUser != null) {
-      await currentUser.updatePassword(newPassword);
-      await _firestore.collection('users').doc(_user.email).update({'password': newPassword});
-      notifyListeners();
-    } else {
-      throw Exception("No user is currently signed in.");
+    try {
+      User? currentUser = _auth.currentUser;
+      if (currentUser != null) {
+        await currentUser.updatePassword(newPassword);
+        await _firestore.collection('users').doc(_user.email).update({'password': newPassword});
+        notifyListeners();
+        print('Password updated successfully');
+      } else {
+        throw Exception("No user is currently signed in.");
+      }
+    } catch (e) {
+      print('Error updating password: $e');
     }
   }
 
   Future<void> updateSubscription(int subscriptionType, List<String> timeFrames) async {
-    _user.subscriptionType = subscriptionType;
-    _user.timeFrames = timeFrames;
-    _user.subscriptionEndDate = DateTime.now().add(Duration(days: 30));
-    _user.isCanceled = false;
+    try {
+      if (_user.email.isEmpty) {
+        throw Exception("User is not signed in.");
+      }
 
-    DocumentReference userDocRef = _firestore.collection('users').doc(_user.email);
+      print('Updating subscription for user: ${_user.email}');
+      _user.subscriptionType = subscriptionType;
+      _user.timeFrames = timeFrames;
+      _user.subscriptionEndDate = DateTime.now().add(Duration(days: 30));
+      _user.paymentDate = DateTime.now();
+      _user.isCanceled = false;
 
-    DocumentSnapshot userDoc = await userDocRef.get();
-    if (userDoc.exists) {
-      await userDocRef.update(_user.toJson());
-    } else {
-      throw Exception('User document does not exist.');
+      DocumentReference userDocRef = _firestore.collection('users').doc(_user.email);
+      print('Document reference path: ${userDocRef.path}');
+
+      DocumentSnapshot userDoc = await userDocRef.get();
+      if (userDoc.exists) {
+        await userDocRef.update(_user.toJson());
+        notifyListeners();
+        print('Subscription updated successfully');
+      } else {
+        throw Exception('User document does not exist.');
+      }
+    } catch (e) {
+      print('Error updating subscription: $e');
+      throw e;
     }
-
-    notifyListeners();
   }
 
   Future<void> addHistoryEntry(HistoryEntry entry) async {
-    _user.history.add(entry);
-    await _firestore.collection('users').doc(_user.email).update({
-      'history': FieldValue.arrayUnion([entry.toJson()]),
-    });
-    notifyListeners();
+    try {
+      _user.history.add(entry);
+      await _firestore.collection('users').doc(_user.email).update({
+        'history': FieldValue.arrayUnion([entry.toJson()]),
+      });
+      notifyListeners();
+      print('History entry added successfully');
+    } catch (e) {
+      print('Error adding history entry: $e');
+    }
   }
 
   Future<void> updateHistoryEntryRating(int index, int rating) async {
-    _user.history[index].rating = rating;
-    await _firestore.collection('users').doc(_user.email).update({
-      'history': _user.history.map((e) => e.toJson()).toList(),
-    });
-    notifyListeners();
+    try {
+      _user.history[index].rating = rating;
+      await _firestore.collection('users').doc(_user.email).update({
+        'history': _user.history.map((e) => e.toJson()).toList(),
+      });
+      notifyListeners();
+      print('History entry rating updated successfully');
+    } catch (e) {
+      print('Error updating history entry rating: $e');
+    }
   }
 
   Future<void> cancelSubscription() async {
-    _user.isCanceled = true;
-    _user.cancellationDate = DateTime.now();
+    try {
+      _user.isCanceled = true;
+      _user.cancellationDate = DateTime.now();
 
-    DocumentReference userDocRef = _firestore.collection('users').doc(_user.email);
+      DocumentReference userDocRef = _firestore.collection('users').doc(_user.email);
 
-    DocumentSnapshot userDoc = await userDocRef.get();
-    if (userDoc.exists) {
-      await userDocRef.update(_user.toJson());
-    } else {
-      throw Exception('User document does not exist.');
+      DocumentSnapshot userDoc = await userDocRef.get();
+      if (userDoc.exists) {
+        await userDocRef.update(_user.toJson());
+        notifyListeners();
+        print('Subscription canceled successfully');
+      } else {
+        throw Exception('User document does not exist.');
+      }
+    } catch (e) {
+      print('Error canceling subscription: $e');
     }
-
-    notifyListeners();
   }
 
   Future<void> deleteAccount(BuildContext context) async {
-    if (_user != null) {
-      await _firestore.collection('usedFreeTrialEmails').doc(_user.email).set({'used': true});
-      await _firestore.collection('users').doc(_user.email).delete();
-      _user = UserModel(
-        email: '',
-        name: '',
-        subscriptionType: 0,
-        timeFrames: [],
-        history: [],
-        isFreeTrial: false,
-        signupDate: DateTime.now(),
-        uid: '',
-        subscriptionEndDate: DateTime.now(), // Initialize uid
-      );
-      notifyListeners();
-      // Navigate to AuthScreen
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => SignInScreen()),
-            (Route<dynamic> route) => false,
-      );
+    try {
+      if (_user != null) {
+        await _firestore.collection('usedFreeTrialEmails').doc(_user.email).set({'used': true});
+        await _firestore.collection('users').doc(_user.email).delete();
+        _user = UserModel(
+          email: '',
+          name: '',
+          subscriptionType: 0,
+          timeFrames: [],
+          history: [],
+          isFreeTrial: false,
+          signupDate: DateTime.now(),
+          uid: '',
+          subscriptionEndDate: DateTime.now(),
+          password: '', // Initialize uid
+          paymentDate: DateTime.now(), // Initialize paymentDate
+        );
+        notifyListeners();
+        // Navigate to AuthScreen
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => SignInScreen()),
+              (Route<dynamic> route) => false,
+        );
+        print('Account deleted successfully');
+      }
+    } catch (e) {
+      print('Error deleting account: $e');
     }
   }
 
@@ -250,47 +304,69 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<void> updateHistoryEntryName(int index, String newTitle) async {
-    _user.history[index].title = newTitle;
-    await _firestore.collection('users').doc(_user.email).update({
-      'history': _user.history.map((e) => e.toJson()).toList(),
-    });
-    notifyListeners();
+    try {
+      _user.history[index].title = newTitle;
+      await _firestore.collection('users').doc(_user.email).update({
+        'history': _user.history.map((e) => e.toJson()).toList(),
+      });
+      notifyListeners();
+      print('History entry name updated successfully');
+    } catch (e) {
+      print('Error updating history entry name: $e');
+    }
   }
 
   Future<void> deleteHistoryEntry(int index) async {
-    _user.history.removeAt(index);
-    await _firestore.collection('users').doc(_user.email).update({
-      'history': _user.history.map((e) => e.toJson()).toList(),
-    });
-    notifyListeners();
+    try {
+      _user.history.removeAt(index);
+      await _firestore.collection('users').doc(_user.email).update({
+        'history': _user.history.map((e) => e.toJson()).toList(),
+      });
+      notifyListeners();
+      print('History entry deleted successfully');
+    } catch (e) {
+      print('Error deleting history entry: $e');
+    }
   }
 
   Future<void> deleteHistory() async {
-    _user.history.clear();
-    await _firestore.collection('users').doc(_user.email).update({
-      'history': [],
-    });
-    notifyListeners();
+    try {
+      _user.history.clear();
+      await _firestore.collection('users').doc(_user.email).update({
+        'history': [],
+      });
+      notifyListeners();
+      print('History cleared successfully');
+    } catch (e) {
+      print('Error clearing history: $e');
+    }
   }
 
   Future<void> logout(BuildContext context) async {
-    await _auth.signOut();
-    _user = UserModel(
-      email: '',
-      name: '',
-      subscriptionType: 0,
-      timeFrames: [],
-      history: [],
-      isFreeTrial: false,
-      signupDate: DateTime.now(),
-      uid: '',
-      subscriptionEndDate: DateTime.now(), // Initialize uid
-    );
-    notifyListeners();
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => SignInScreen()),
-          (Route<dynamic> route) => false,
-    );
+    try {
+      await _auth.signOut();
+      _user = UserModel(
+        email: '',
+        name: '',
+        subscriptionType: 0,
+        timeFrames: [],
+        history: [],
+        isFreeTrial: false,
+        signupDate: DateTime.now(),
+        uid: '',
+        subscriptionEndDate: DateTime.now(),
+        password: '', // Initialize uid
+        paymentDate: DateTime.now(), // Initialize paymentDate
+      );
+      notifyListeners();
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => SignInScreen()),
+            (Route<dynamic> route) => false,
+      );
+      print('Logged out successfully');
+    } catch (e) {
+      print('Error logging out: $e');
+    }
   }
 }
