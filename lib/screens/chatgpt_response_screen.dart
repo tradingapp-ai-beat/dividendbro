@@ -10,8 +10,7 @@ import '../widgets/app_drawer.dart';
 import '../widgets/top_bar.dart';
 import 'history_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'questions_screen.dart';  // Import the QuestionsScreen
-import 'questions_screen2.dart'; // Import the QuestionsScreen2
+import 'questions_screen.dart';
 
 class ChatGPTResponseScreen extends StatefulWidget {
   final String imagePath;

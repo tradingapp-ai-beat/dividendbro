@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/user_provider.dart';
 import '../models/user_model.dart';
-import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
+import 'package:firebase_storage/firebase_storage.dart';
 
 class HistoryScreen extends StatelessWidget {
   @override
@@ -26,7 +26,7 @@ class HistoryScreen extends StatelessWidget {
                   leading: SizedBox(
                     width: 50,
                     height: 50,
-                    child: _buildImage(entry.imageUrl, entry.imageBytes),
+                    child: _buildImage(context, entry.imageUrl),
                   ),
                   title: Text(
                     entry.title.isNotEmpty
@@ -54,7 +54,7 @@ class HistoryScreen extends StatelessWidget {
                     ],
                   ),
                   onTap: () {
-                    _showDetailDialog(context, entry);
+                    _showFullImageDialog(context, entry.imageUrl, entry.response);
                   },
                 ),
                 _buildRatingRow(context, entry, originalIndex),
@@ -66,17 +66,82 @@ class HistoryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildImage(String? imageUrl, Uint8List? imageBytes) {
-    if (imageBytes != null) {
-      return Image.memory(imageBytes, fit: BoxFit.cover);
-    } else if (imageUrl != null && imageUrl.isNotEmpty) {
-      return Image.network(imageUrl, fit: BoxFit.cover, errorBuilder: (context, error, stackTrace) {
-        return Icon(Icons.broken_image, size: 50);
-      });
-    } else {
-      return Icon(Icons.image_not_supported, size: 50);
+  Widget _buildImage(BuildContext context, String imageUrl) {
+    if (imageUrl.isEmpty) {
+      return Icon(Icons.broken_image, size: 50);
     }
+
+    return GestureDetector(
+      onTap: () => _showFullImageDialog(context, imageUrl, ""),
+      child: Image.network(
+        imageUrl,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Icon(Icons.broken_image, size: 50);
+        },
+      ),
+    );
   }
+
+  void _showFullImageDialog(BuildContext context, String imageUrl, String response) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Expanded(
+              child: InteractiveViewer(
+                boundaryMargin: EdgeInsets.all(20.0),
+                minScale: 0.1,
+                maxScale: 4.0,
+                child: AspectRatio(
+                  aspectRatio: 16 / 9, // Set the aspect ratio to match the image's aspect ratio
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Center(child: Icon(Icons.broken_image, size: 100));
+                    },
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.all(8.0),
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.4, // Limit the height
+              ),
+              child: SingleChildScrollView(
+                child: Text(
+                  response,
+                  style: TextStyle(fontSize: 16.0),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text('Close'),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+
 
   Widget _buildRatingRow(BuildContext context, HistoryEntry entry, int index) {
     return Row(
@@ -92,36 +157,6 @@ class HistoryScreen extends StatelessWidget {
           },
         );
       }),
-    );
-  }
-
-  void _showDetailDialog(BuildContext context, HistoryEntry entry) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Detail'),
-        content: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                width: double.infinity,
-                height: 200,
-                child: _buildImage(entry.imageUrl, entry.imageBytes),
-              ),
-              SizedBox(height: 10),
-              Text(entry.response),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text('Close'),
-          ),
-        ],
-      ),
     );
   }
 
