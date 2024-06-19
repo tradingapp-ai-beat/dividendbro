@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/network_service.dart';
 import '../provider/user_provider.dart';
-import 'questions_screen.dart'; // Import the QuestionsScreen
+import 'questions_screen.dart';
 import 'sign_up_screen.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -21,7 +21,7 @@ class _SignInScreenState extends State<SignInScreen> {
     bool success = await Provider.of<UserProvider>(context, listen: false).signIn(email, password);
     if (success) {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
-      Navigator.pushReplacement(
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
           builder: (context) => QuestionsScreen(
@@ -29,6 +29,7 @@ class _SignInScreenState extends State<SignInScreen> {
             name: userProvider.user.name ?? '', previousScreen: '',
           ),
         ),
+            (Route<dynamic> route) => false,
       );
     } else {
       _showErrorDialog("Sign-in failed");

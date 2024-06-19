@@ -250,7 +250,7 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
           ),
           if (_isLoading) // Show loading indicator when loading
             Container(
-              color: Colors.black54,
+              color: Colors.white,
               child: Center(
                 child: CircularProgressIndicator(),
               ),

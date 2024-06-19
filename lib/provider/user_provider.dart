@@ -1,12 +1,12 @@
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
-import 'package:flutter/material.dart';
-import 'package:trading_advice_app_v2/screens/auth_screen.dart';
-import 'package:trading_advice_app_v2/screens/sign_up_screen.dart';
 import 'dart:io';
-import '../models/user_model.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:trading_advice_app_v2/screens/auth_screen.dart';
+import '../models/user_model.dart';
+import 'dart:html' as html;
 
 class UserProvider with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -63,6 +63,11 @@ class UserProvider with ChangeNotifier {
       return DateTime.now().isBefore(activeUntil);
     }
     return false;
+  }
+
+  bool get isSubscriptionActive {
+    final now = DateTime.now();
+    return now.isBefore(_user.paymentDate.add(Duration(days: 30)));
   }
 
   Future<bool> checkEmailExists(String email) async {
@@ -303,8 +308,11 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-
   Future<String> uploadImage(dynamic file) async {
+    if (!isSubscriptionActive) {
+      throw Exception('Your subscription has expired. Please renew to upload new images.');
+    }
+
     try {
       String fileName = DateTime.now().millisecondsSinceEpoch.toString();
       final storageRef = _storage.ref().child('user_images/${_user.email}/$fileName.jpg');
@@ -387,12 +395,15 @@ class UserProvider with ChangeNotifier {
         paymentDate: DateTime.now(), // Initialize paymentDate
       );
       notifyListeners();
+
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => SignInScreen()),
             (Route<dynamic> route) => false,
       );
-      print('Logged out successfully');
+
+      // Optionally, force a full reload of the web page to clear any cached state.
+      html.window.location.reload();
     } catch (e) {
       print('Error logging out: $e');
     }

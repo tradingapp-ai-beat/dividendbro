@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/user_provider.dart';
-import 'payment_screen.dart';
+import 'payment_screen2.dart';
 
 class SubscriptionScreen extends StatefulWidget {
   @override
@@ -9,15 +9,20 @@ class SubscriptionScreen extends StatefulWidget {
 }
 
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
-  int _selectedSubscriptionType = 0;
+  int? _selectedSubscriptionType;
   List<String> _selectedTimeFrames = [];
 
   Future<void> _subscribe() async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
+    if (_selectedSubscriptionType == null) {
+      _showErrorDialog("Please select a subscription plan.");
+      return;
+    }
+
     if ((_selectedSubscriptionType == 1 && _selectedTimeFrames.length != 1) ||
-        (_selectedSubscriptionType == 2 && _selectedTimeFrames.length != 2)||
-        (_selectedSubscriptionType == 3 && _selectedTimeFrames.length != 5)){
+        (_selectedSubscriptionType == 2 && _selectedTimeFrames.length != 2) ||
+        (_selectedSubscriptionType == 3 && _selectedTimeFrames.length != 5)) {
       _showErrorDialog("Please select the correct number of time frames.");
       return;
     }
@@ -25,15 +30,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => PaymentScreen(
-          subscriptionType: _selectedSubscriptionType,
+        builder: (context) => PaymentScreen2(
+          subscriptionType: _selectedSubscriptionType!,
           timeFrames: _selectedTimeFrames,
           email: userProvider.user.email,
           name: userProvider.user.name,
+          password: null, // No need to pass password for subscription update
           previousScreen: 'subscription',
-          password: '',
-          //isSignUp: false,
-
         ),
       ),
     );
@@ -170,16 +173,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       appBar: AppBar(
         title: Text('Select a Plan'),
         automaticallyImplyLeading: false, // Hide the back arrow
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context); // Navigate back to the previous screen
-          },
-        ),
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          bool isMobile = constraints.maxWidth < 600;
           return SingleChildScrollView(
             padding: EdgeInsets.all(16.0),
             child: Center(

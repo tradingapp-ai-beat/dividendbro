@@ -58,9 +58,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         SizedBox(height: 20),
                         const Text(
                           'Simplify your trading with dividendBeat, your AI-powered charts analyst. \n\n '
-                              'For any type of market (Stocks, Forex, Cryptos, Commodities ...) \n\n'
-                              'Make informed decisions instantly and optimize your trades effortlessly, unlike anything else.\n\n'
-                              'Keep track of your trades, save and rate your beats, .\n\n',
+                          'NO more hours making support lines, resistence lines, trend lines, analysing patterns, bearish, bullish, ...  \n\n  '
+                          'For any type of market (Stocks, Forex, Cryptos, Commodities ...) \n\n'
+                          'Make informed decisions in a few seconds and optimize your trades effortlessly, unlike anything else.\n\n'
+                          'Keep track of your trades, save and rate your beats, .\n\n',
                           style: TextStyle(
                             fontFamily: 'RobotoMono',
                             fontSize: 18,
