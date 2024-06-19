@@ -21,7 +21,7 @@ class MobileImageService implements ImageService {
     print('Extracted timeframe: $extractedTimeframe');
 
     if (extractedTimeframe == null || extractedTimeframe.isEmpty) {
-      return 'The uploaded chart image does not contain clear information. Please upload a better-quality image with more detail.';
+      return 'Please upload a chart image or a better image with clear information.';
     }
 
     // Normalize the timeframes for comparison

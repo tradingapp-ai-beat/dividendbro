@@ -2,6 +2,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:trading_advice_app_v2/screens/auth_screen.dart';
+import 'package:trading_advice_app_v2/screens/sign_up_screen.dart';
 import 'dart:io';
 import '../models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -247,8 +248,16 @@ class UserProvider with ChangeNotifier {
   Future<void> deleteAccount(BuildContext context) async {
     try {
       if (_user != null) {
+        // Mark the email as having used the free trial
         await _firestore.collection('usedFreeTrialEmails').doc(_user.email).set({'used': true});
+
+        // Delete user files from Firebase Storage
+        await _deleteUserFiles(_user.email);
+
+        // Delete the user document from Firestore
         await _firestore.collection('users').doc(_user.email).delete();
+
+        // Reset the user model
         _user = UserModel(
           email: '',
           name: '',
@@ -259,10 +268,11 @@ class UserProvider with ChangeNotifier {
           signupDate: DateTime.now(),
           uid: '',
           subscriptionEndDate: DateTime.now(),
-          password: '', // Initialize uid
-          paymentDate: DateTime.now(), // Initialize paymentDate
+          password: '',
+          paymentDate: DateTime.now(),
         );
         notifyListeners();
+
         // Navigate to AuthScreen
         Navigator.pushAndRemoveUntil(
           context,
@@ -275,6 +285,24 @@ class UserProvider with ChangeNotifier {
       print('Error deleting account: $e');
     }
   }
+
+  Future<void> _deleteUserFiles(String email) async {
+    try {
+      final storageRef = _storage.ref().child('user_images/$email');
+
+      // List all files in the user's directory
+      final ListResult result = await storageRef.listAll();
+
+      // Delete each file
+      for (var item in result.items) {
+        await item.delete();
+      }
+      print('User files deleted successfully');
+    } catch (e) {
+      print('Error deleting user files: $e');
+    }
+  }
+
 
   Future<String> uploadImage(dynamic file) async {
     try {
