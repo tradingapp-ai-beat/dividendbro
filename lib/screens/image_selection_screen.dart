@@ -20,6 +20,7 @@ class ImageSelectionScreen extends StatefulWidget {
   final String? selectedStrategy;
   final String? additionalParameter;
 
+
   ImageSelectionScreen({
     required this.subscribedTimeFrames,
     required this.name,
@@ -33,6 +34,7 @@ class ImageSelectionScreen extends StatefulWidget {
 
 class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
   final ImagePicker _picker = ImagePicker();
+  bool _isLoading = false; // Add this line
 
   Future<void> _pickImage(ImageSource source) async {
     final pickedFile = await _picker.getImage(source: source);
@@ -47,11 +49,19 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
         }
       }
 
+      setState(() {
+        _isLoading = true; // Show loading indicator
+      });
+
       final userProvider = Provider.of<UserProvider>(context, listen: false);
       String imageUrl = await userProvider.uploadImage(image);
       if (imageUrl.isNotEmpty) {
-        _analyzeImageAndFetchAdvice(imageUrl);
+        await _analyzeImageAndFetchAdvice(imageUrl); // Ensure await here
       }
+
+      setState(() {
+        _isLoading = false; // Hide loading indicator
+      });
     }
   }
 
@@ -128,113 +138,124 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
     return Scaffold(
       appBar: TopBar(name: widget.name),
       drawer: AppDrawer(),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: constraints.maxWidth > 600 ? 600 : double.infinity,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(height: 20),
-                    Text(
-                      'Welcome, ${widget.name}!',
-                      style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
+      body: Stack( // Wrap with Stack to show loading indicator
+        children: [
+          LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: constraints.maxWidth > 600 ? 600 : double.infinity,
                     ),
-                    SizedBox(height: 30),
-                    Text(
-                      'Instructions',
-                      style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 10),
-                    RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'PRO Tip - dividendBeat recommends using ',
-                            style: TextStyle(fontSize: 16.0, color: Colors.black),
-                          ),
-                          TextSpan(
-                            text: 'RSI, MACD, EMA 20, EMA 50, EMA 200, Bollinger Bands + other indicators in your charts images,',
-                            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.black),
-                          ),
-                          TextSpan(
-                            text: 'that will help dividendBeat creating more detailed analysis to help you maximize your trading potential.\n\n',
-                            style: TextStyle(fontSize: 16.0, color: Colors.black),
-                          ),
-                          TextSpan(
-                            text: '1. Capture and upload an image of a trading chart from any charts platform. \n\n',
-                            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.black),
-                          ),
-                          TextSpan(
-                            text: 'Examples: \n',
-                            style: TextStyle(fontSize: 16.0, color: Colors.black),
-                          ),
-                          WidgetSpan(
-                            child: GestureDetector(
-                              onTap: _navigateToExamples,
-                              child: Text(
-                                'Click to see.',
-                                style: TextStyle(fontSize: 16.0, color: Colors.blue, decoration: TextDecoration.underline),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        SizedBox(height: 20),
+                        Text(
+                          'Welcome, ${widget.name}!',
+                          style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 30),
+                        Text(
+                          'Instructions',
+                          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 10),
+                        RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'PRO Tip - dividendBeat recommends using ',
+                                style: TextStyle(fontSize: 16.0, color: Colors.black),
                               ),
+                              TextSpan(
+                                text: 'RSI, MACD, EMA 20, EMA 50, EMA 200, Bollinger Bands + other indicators in your charts images,',
+                                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.black),
+                              ),
+                              TextSpan(
+                                text: 'that will help dividendBeat creating more detailed analysis to help you maximize your trading potential.\n\n',
+                                style: TextStyle(fontSize: 16.0, color: Colors.black),
+                              ),
+                              TextSpan(
+                                text: '1. Capture and upload an image of a trading chart from any charts platform. \n\n',
+                                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.black),
+                              ),
+                              TextSpan(
+                                text: 'Examples: \n',
+                                style: TextStyle(fontSize: 16.0, color: Colors.black),
+                              ),
+                              WidgetSpan(
+                                child: GestureDetector(
+                                  onTap: _navigateToExamples,
+                                  child: Text(
+                                    'Click to see.',
+                                    style: TextStyle(fontSize: 16.0, color: Colors.blue, decoration: TextDecoration.underline),
+                                  ),
+                                ),
+                              ),
+                              TextSpan(
+                                text: '\n\n',
+                                style: TextStyle(fontSize: 16.0, color: Colors.black),
+                              ),
+                              TextSpan(
+                                text: '2. dividenBeat will beat the chart and provide the best trading insights based on the technical analysis.\n\n',
+                                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.black),
+                              ),
+                              TextSpan(
+                                text: '3. Leave emotions aside. Make more informed decisions.',
+                                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.black),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 30),
+                        Text(
+                          'Now, let\'s start by uploading your chart!',
+                          style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 20),
+                        ElevatedButton.icon(
+                          onPressed: () => _showUploadOptions(context),
+                          icon: SvgPicture.asset(
+                            'assets/beat.svg',
+                            height: 30,
+                            width: 30,
+                          ),
+                          label: Text('Select Chart'),
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
                             ),
                           ),
-                          TextSpan(
-                            text: '\n\n',
-                            style: TextStyle(fontSize: 16.0, color: Colors.black),
-                          ),
-                          TextSpan(
-                            text: '2. dividenBeat will beat the chart and provide the best trading insights based on the technical analysis.\n\n',
-                            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.black),
-                          ),
-                          TextSpan(
-                            text: '3. Leave emotions aside. Make more informed decisions.',
-                            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.black),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 30),
-                    Text(
-                      'Now, let\'s start by uploading your chart!',
-                      style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 20),
-                    ElevatedButton.icon(
-                      onPressed: () => _showUploadOptions(context),
-                      icon: SvgPicture.asset(
-                        'assets/beat.svg',
-                        height: 30,
-                        width: 30,
-                      ),
-                      label: Text('Select Chart'),
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
                         ),
-                      ),
+                        SizedBox(height: 30),
+                        Text(
+                          'Trading involves significant risk and can result in substantial losses. Ensure you understand the risks involved before proceeding.',
+                          style: TextStyle(fontSize: 12.0, color: Colors.grey),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
                     ),
-                    SizedBox(height: 30),
-                    Text(
-                      'Trading involves significant risk and can result in substantial losses. Ensure you understand the risks involved before proceeding.',
-                      style: TextStyle(fontSize: 12.0, color: Colors.grey),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
+                  ),
                 ),
+              );
+            },
+          ),
+          if (_isLoading) // Show loading indicator when loading
+            Container(
+              color: Colors.black54,
+              child: Center(
+                child: CircularProgressIndicator(),
               ),
             ),
-          );
-        },
+        ],
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 16.0),
