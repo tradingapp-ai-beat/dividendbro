@@ -67,14 +67,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       children: [
         _buildSubscriptionCard(
           title: 'Beat 1',
-          price: '9.99€ / month',
+          price: '14.99€ / month',
           description: 'Choose 1 Beat time frame',
           subscriptionType: 1,
           maxSelections: 1,
         ),
         _buildSubscriptionCard(
           title: 'Beat 2',
-          price: '19.99€ / month',
+          price: '24.99€ / month',
           description: 'Choose 2 Beats time frames',
           subscriptionType: 2,
           maxSelections: 2,
