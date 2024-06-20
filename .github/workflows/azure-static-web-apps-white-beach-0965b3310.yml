@@ -20,6 +20,7 @@ jobs:
           submodules: true
           lfs: false
 
+<<<<<<< HEAD
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -30,6 +31,18 @@ jobs:
 
       - name: Build Project
         run: flutter build web
+=======
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Project
+        run: npm run build
+>>>>>>> 10c34ea0079e1efecbda22f8f45f8a7b5611c60a
 
       - name: Build And Deploy
         id: builddeploy
