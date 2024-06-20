@@ -11,30 +11,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.19.5'  # Use the same version as your local setup
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.5'  # Use the same version as your local setup
 
-    - name: Verify Flutter and Dart Version
-      run: flutter --version
+      - name: Verify Flutter and Dart Version
+        run: flutter --version
 
-    - name: Install Dependencies
-      run: flutter pub get
+      - name: Install Dependencies
+        run: flutter pub get
 
-    - name: Build Web App
-      run: flutter build web
+      - name: Build Web App
+        run: flutter build web
 
-    - name: Install Azure CLI
-      run: |
-        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+      - name: List Build Directory Contents
+        run: ls -R build/web
 
-    - name: Login to Azure
-      run: az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+      - name: Install Azure CLI
+        run: |
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
-    - name: Create Azure Static Web App
-      run: |
-        az staticwebapp create --name dividendbeat1 --resource-group beta_test_group --sku FREE --location centralus --source https://github.com/tradingapp-ai-beat/dividendbro --app-location / --output-location build/web --branch image-handling --token ${{ secrets.GH_PAT }}
+      - name: Login to Azure
+        run: az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+
+      - name: Create Azure Static Web App
+        run: |
+          az staticwebapp create --name dividendbeat1 --resource-group beta_test_group --sku FREE --location centralus --source https://github.com/tradingapp-ai-beat/dividendbro --app-location / --output-location build/web --branch image-handling --token ${{ secrets.GH_PAT }}
+
+      - name: Deploy to Azure Static Web Apps
+        run: |
+          az staticwebapp deploy --name dividendbeat1 --resource-group beta_test_group --source ./build/web --location centralus
