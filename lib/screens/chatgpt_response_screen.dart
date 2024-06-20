@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:html' as html; // Import the dart:html library
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:image_picker/image_picker.dart';
@@ -42,18 +41,7 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
   @override
   void initState() {
     super.initState();
-    _setupOnBeforeUnload();
     _processImage();
-  }
-
-  void _setupOnBeforeUnload() {
-    if (kIsWeb) {
-      html.window.onBeforeUnload.listen((event) {
-        final message = 'Are you sure you want to leave? Any unsaved changes will be lost.';
-        event.preventDefault();
-        (event as html.BeforeUnloadEvent).returnValue = message;
-      });
-    }
   }
 
   Future<void> _processImage() async {
@@ -96,8 +84,7 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
       MaterialPageRoute(
         builder: (context) => QuestionsScreen(
           subscribedTimeFrames: widget.subscribedTimeFrames,
-          name: widget.name,
-          previousScreen: '',
+          name: widget.name, previousScreen: '',
         ),
       ),
     );
