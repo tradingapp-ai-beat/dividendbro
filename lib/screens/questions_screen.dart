@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'chatgpt_response_screen.dart';
 import 'questions_screen2.dart'; // Import the new screen
 import 'image_selection_screen.dart'; // Import the image selection screen
-//import 'chat_gpt_response_screen.dart'; // Import the chat screen
 
 class QuestionsScreen extends StatefulWidget {
   final List<String> subscribedTimeFrames;
@@ -54,46 +53,12 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     );
   }
 
-  void _navigateBack() {
-    if (widget.previousScreen == 'ImageSelectionScreen') {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ImageSelectionScreen(
-            name: widget.name, // Provide the necessary parameters
-            subscribedTimeFrames: widget.subscribedTimeFrames, // Provide the necessary parameters
-          ),
-        ),
-      );
-    } else if (widget.previousScreen == 'ChatGPTResponseScreen') {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ChatGPTResponseScreen(
-            analysisResponse: '', // Provide the necessary parameters
-            imagePath: '', // Provide the necessary parameters
-            name: widget.name, // Provide the necessary parameters
-            subscribedTimeFrames: widget.subscribedTimeFrames, // Provide the necessary parameters
-          ),
-        ),
-      );
-    } else {
-      Navigator.pop(context);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(''),
-        automaticallyImplyLeading: widget.previousScreen != 'PaymentScreen' && widget.previousScreen != 'PaymentScreen2',
-        leading: widget.previousScreen != 'PaymentScreen' && widget.previousScreen != 'PaymentScreen2'
-            ? IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: _navigateBack,
-        )
-            : null,
+        automaticallyImplyLeading: false, // Ensure the back arrow is not shown
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
