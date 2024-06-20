@@ -17,7 +17,7 @@ jobs:
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.19.5'  # Use the same version as your local setup
+        flutter-version: '3.19.5'  ## Use the same version as your local setup
 
     - name: Verify Flutter and Dart Version
       run: flutter --version
