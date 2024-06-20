@@ -1,36 +1,33 @@
-name: Azure Static Web Apps CI/CD
+name: Build and Deploy Static Web App
 
 on:
   push:
     branches:
-      - main  # Change this to your main branch
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
+      - main
 
 jobs:
   build_and_deploy_job:
-    if: github.event_name != 'pull_request' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    name: Build and Deploy
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout GitHub Action
+        uses: actions/checkout@v2
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
         with:
-          flutter-version: '3.3.3'  # Ensure this matches your Flutter version
+          node-version: '14'
 
-      - name: Install dependencies
-        run: flutter pub get
+      - name: Install Dependencies
+        run: npm install
 
-      - name: Build Flutter web
-        run: flutter build web
+      - name: Build Project
+        run: npm run build
 
-      - name: Deploy to Azure
+      - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}  # Default is ${{ secrets.GITHUB_TOKEN }}
-          action: 'upload'
-          app_location: 'build/web'  # The output directory of the Flutter web build
-          output_location: '/'
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: upload
+          app_location: "/"
+          output_location: "build/web"  # Adjust this to your actual build output directory
