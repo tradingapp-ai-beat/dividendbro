@@ -37,4 +37,4 @@ jobs:
 
     - name: Deploy to Azure Static Web Apps
       run: |
-        az staticwebapp upload --name dividendBeat --resource-group beta_test_group --source ./build/web --location eastus
+        az staticwebapp upload --source ./build/web --name dividendBeat --resource-group beta_test_group --location eastus
