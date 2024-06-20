@@ -17,7 +17,7 @@ jobs:
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.19.5'  ## Use the same version as your local setup
+        flutter-version: '3.19.5'  # Use the same version as your local setup
 
     - name: Verify Flutter and Dart Version
       run: flutter --version
@@ -35,6 +35,6 @@ jobs:
     - name: Login to Azure
       run: az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
 
-    - name: Deploy to Azure Static Web Apps
+    - name: Create Azure Static Web App
       run: |
-        az staticwebapp create --name dividendbeat1 --resource-group beta_test_group --sku FREE --location centralus --source ./build/web  --login-with-github --app-location / --output-location build/web --branch image-handling
+        az staticwebapp create --name dividendbeat1 --resource-group beta_test_group --sku FREE --location centralus --source https://github.com/tradingapp-ai-beat/dividendbro --app-location / --output-location build/web --branch image-handling --token ${{ secrets.GITHUB_TOKEN }}
