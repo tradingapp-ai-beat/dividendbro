@@ -37,4 +37,4 @@ jobs:
 
     - name: Deploy to Azure Static Web Apps
       run: |
-        az staticwebapp create --name dividendbeat1 --resource-group beta_test_group --sku FREE --location centralus --source ./build/web  --login-with-github --app-location / --output-location build/web --branch image-handling --repo-url https://github.com/tradingapp-ai-beat/dividendbro/tree/image-handling
+        az staticwebapp create --name dividendbeat1 --resource-group beta_test_group --sku FREE --location centralus --source ./build/web  --login-with-github --app-location / --output-location build/web --branch image-handling --repo-url https://github.com/tradingapp-ai-beat/dividendbro
