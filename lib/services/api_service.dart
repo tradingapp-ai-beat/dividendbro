@@ -22,7 +22,7 @@ class ApiService {
       'max_tokens': 2500,
     });
 
-    print('Sending analyzeImageFromUrl request: $requestBody');
+ //   print('Sending analyzeImageFromUrl request: $requestBody');
 
     try {
       final response = await http.post(
@@ -34,15 +34,15 @@ class ApiService {
         body: requestBody,
       );
 
-      print('Received analyzeImageFromUrl response: ${response.body}');
+  //    print('Received analyzeImageFromUrl response: ${response.body}');
 
       if (response.statusCode == 200) {
         var responseData = json.decode(response.body);
         String text = responseData['choices'][0]['message']['content'];
-        print('Analysis text content: $text');
+    //    print('Analysis text content: $text');
         bool isChart = text.contains('trading chart');
         String timeframe = extractTimeframe(text);
-        print('Matched timeframe: $timeframe');
+  //      print('Matched timeframe: $timeframe');
         return {
           'isChart': isChart.toString(),
           'timeframe': timeframe,
@@ -51,13 +51,13 @@ class ApiService {
         throw Exception('Failed to analyze image: ${response.body}');
       }
     } catch (e) {
-      print('Error analyzing image: $e');
+   //   print('Error analyzing image: $e');
       rethrow;
     }
   }
 
   static String extractTimeframe(String text) {
-    print('Input text for regex: $text');
+   // print('Input text for regex: $text');
 
     // Updated regex to handle various formats including quotes and punctuation
     RegExp regex = RegExp(r'(minutes|hours|days|weeks|months)', caseSensitive: false);
@@ -65,10 +65,10 @@ class ApiService {
 
     if (match != null) {
       String matched = match.group(1)!.toLowerCase();
-      print('Matched timeframe: $matched');
+ //     print('Matched timeframe: $matched');
       return matched;
     } else {
-      print('No timeframe matched.');
+   //   print('No timeframe matched.');
       return ''; // Ensure a non-null value is returned
     }
   }
@@ -117,7 +117,7 @@ class ApiService {
       'max_tokens': 3000,
     });
 
-    print('Sending getAdviceFromImage request: $requestBody');
+  //  print('Sending getAdviceFromImage request: $requestBody');
 
     try {
       final response = await http.post(
@@ -129,7 +129,7 @@ class ApiService {
         body: requestBody,
       );
 
-      print('Received getAdviceFromImage response: ${response.body}');
+  //    print('Received getAdviceFromImage response: ${response.body}');
 
       if (response.statusCode == 200) {
         var responseData = json.decode(response.body);
@@ -138,7 +138,7 @@ class ApiService {
         throw Exception('Failed to load advice: ${response.body}');
       }
     } catch (e) {
-      print('Error getting advice from image: $e');
+  //    print('Error getting advice from image: $e');
       rethrow;
     }
   }

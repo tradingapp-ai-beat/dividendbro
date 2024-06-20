@@ -46,7 +46,7 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
 
   Future<void> _processImage() async {
     try {
-      print('Processing image...');
+      //print('Processing image...');
       String response = await getImageService().processImage(
         widget.imagePath,
         widget.selectedStrategy ?? '',
@@ -54,7 +54,7 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
         widget.additionalParameter ?? '',
       );
 
-      print('Image processed, received response: $response');
+     // print('Image processed, received response: $response');
 
       setState(() {
         _response = response;
@@ -70,7 +70,7 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
         ),
       );
     } catch (e) {
-      print('Error processing image: $e');
+      //print('Error processing image: $e');
       setState(() {
         _response = 'Failed to process image: ${e.toString()}';
         _isLoading = false;
@@ -240,15 +240,15 @@ class _ChatGPTResponseScreenState extends State<ChatGPTResponseScreen> {
       dynamic image;
       if (kIsWeb) {
         image = await pickedFile.readAsBytes(); // Uint8List for web
-        print('Picked a Uint8List image');
+       // print('Picked a Uint8List image');
       } else {
         image = File(pickedFile.path); // File for mobile
       }
       final userProvider = Provider.of<UserProvider>(context, listen: false);
-      print('Starting image upload from _pickImage');
+      //print('Starting image upload from _pickImage');
       String imageUrl = await userProvider.uploadImage(image);
       if (imageUrl.isNotEmpty) {
-        print('Image uploaded successfully, URL: $imageUrl');
+       // print('Image uploaded successfully, URL: $imageUrl');
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

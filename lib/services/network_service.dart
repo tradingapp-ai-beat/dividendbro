@@ -15,12 +15,12 @@ Future<void> sendPasswordResetEmail(String email) async {
     );
 
     if (response.statusCode == 200) {
-      print('Password reset email sent successfully');
+   //   print('Password reset email sent successfully');
     } else {
       print('Failed to send password reset email: ${response
           .statusCode} ${response.body}');
     }
   } catch (error) {
-    print('Error sending password reset email: $error');
+  //  print('Error sending password reset email: $error');
   }
 }

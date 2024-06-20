@@ -17,7 +17,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Future<void> _sendVerificationEmail(User user) async {
     try {
       await user.sendEmailVerification().then((_) {
-        print("Verification email sent to ${user.email}");
+   //     print("Verification email sent to ${user.email}");
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -29,39 +29,39 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
         );
       }).catchError((error) {
-        print("Failed to send verification email: $error");
+ //      print("Failed to send verification email: $error");
         _showErrorDialog("Failed to send verification email. Please try again.");
       });
     } catch (e) {
-      print("Unexpected error sending verification email: $e");
+ //     print("Unexpected error sending verification email: $e");
       _showErrorDialog("Unexpected error sending verification email. Please try again.");
     }
   }
 
   void _signUpAndVerifyEmail() async {
     if (_formKey.currentState!.validate()) {
-      print("Form validated successfully");
+     // print("Form validated successfully");
 
       try {
-        print("Creating user with email: ${_emailController.text}");
+        //print("Creating user with email: ${_emailController.text}");
         UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: _emailController.text,
           password: _passwordController.text,
         );
         User? user = userCredential.user;
         if (user != null && !user.emailVerified) {
-          print("User created successfully: ${user.email}");
-          print("Sending verification email...");
+         // print("User created successfully: ${user.email}");
+         // print("Sending verification email...");
           await _sendVerificationEmail(user);
         } else {
-          print("User creation failed or user already verified");
+         // print("User creation failed or user already verified");
         }
       } catch (e) {
-        print("Failed to create user: $e");
+       // print("Failed to create user: $e");
         _showErrorDialog(e.toString());
       }
     } else {
-      print("Form validation failed");
+   //   print("Form validation failed");
     }
   }
 
@@ -86,50 +86,50 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   String? _validateEmail(String? value) {
-    print("Validating email: $value");
+  //  print("Validating email: $value");
     if (value == null || value.isEmpty) {
-      print("Email cannot be empty");
+  //    print("Email cannot be empty");
       return 'Email cannot be empty';
     }
     final regex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
     if (!regex.hasMatch(value)) {
-      print("Enter a valid email address");
+  //    print("Enter a valid email address");
       return 'Enter a valid email address';
     }
-    print("Email is valid");
+//    print("Email is valid");
     return null;
   }
 
   String? _validatePassword(String? value) {
-    print("Validating password: $value");
+//    print("Validating password: $value");
     if (value == null || value.isEmpty) {
-      print("Password cannot be empty");
+   //   print("Password cannot be empty");
       return 'Password cannot be empty';
     }
     if (value.length < 8) {
-      print("Password must be at least 8 characters long");
+//      print("Password must be at least 8 characters long");
       return 'Password must be at least 8 characters long';
     }
     final regex = RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$');
     if (!regex.hasMatch(value)) {
-      print("Password must contain an uppercase letter, a lowercase letter, a number, and a special character");
+    //  print("Password must contain an uppercase letter, a lowercase letter, a number, and a special character");
       return 'Password must contain an uppercase letter, a lowercase letter, a number, and a special character';
     }
-    print("Password is valid");
+ //   print("Password is valid");
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
-    print("Validating confirm password: $value");
+ //   print("Validating confirm password: $value");
     if (value == null || value.isEmpty) {
-      print("Confirm Password cannot be empty");
+  //    print("Confirm Password cannot be empty");
       return 'Confirm Password cannot be empty';
     }
     if (value != _passwordController.text) {
-      print("Passwords do not match");
+  //    print("Passwords do not match");
       return 'Passwords do not match';
     }
-    print("Confirm Password is valid");
+ //   print("Confirm Password is valid");
     return null;
   }
 

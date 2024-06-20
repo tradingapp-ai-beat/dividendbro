@@ -24,11 +24,11 @@ class EmailService {
       ..text = 'Your OTP code is: $otp';
 
     try {
-      print('Attempting to send email to $recipientEmail');
+    //  print('Attempting to send email to $recipientEmail');
       final sendReport = await send(message, smtpServer);
-      print('Message sent: ' + sendReport.toString());
+    //  print('Message sent: ' + sendReport.toString());
     } on MailerException catch (e) {
-      print('Message not sent. \n${e.toString()}');
+    //  print('Message not sent. \n${e.toString()}');
       for (var p in e.problems) {
         print('Problem: ${p.code}: ${p.msg}');
       }

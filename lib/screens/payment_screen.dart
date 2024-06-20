@@ -56,7 +56,7 @@ class PaymentScreen extends StatelessWidget {
         );
 
         await userProvider.signUp(newUser);
-        print("User signed up and data saved to Firestore.");
+        //print("User signed up and data saved to Firestore.");
 
         Navigator.pushReplacement(
           context,
@@ -68,14 +68,14 @@ class PaymentScreen extends StatelessWidget {
           ),
         );
       } catch (e) {
-        print("Error during sign-up: $e");
+        //print("Error during sign-up: $e");
         _showErrorDialog(context, e.toString());
       }
     } else {
       // Subscription update process
       try {
         await userProvider.updateSubscription(subscriptionType, timeFrames);
-        print("Subscription updated successfully.");
+        //print("Subscription updated successfully.");
 
         Navigator.pushReplacement(
           context,
@@ -87,7 +87,7 @@ class PaymentScreen extends StatelessWidget {
           ),
         );
       } catch (e) {
-        print("Error during subscription update: $e");
+       // print("Error during subscription update: $e");
         _showErrorDialog(context, e.toString());
       }
     }

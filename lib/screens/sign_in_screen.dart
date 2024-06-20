@@ -44,7 +44,7 @@ class _SignInScreenState extends State<SignInScreen> {
       await sendPasswordResetEmail(email);
       _showSuccessDialog('Password reset email sent successfully');
     } else {
-      print('Email is required');
+      //print('Email is required');
       _showErrorDialog('Email is required');
     }
   }

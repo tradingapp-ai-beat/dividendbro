@@ -74,7 +74,7 @@ class UserProvider with ChangeNotifier {
       DocumentSnapshot userDoc = await _firestore.collection('users').doc(email).get();
       return userDoc.exists;
     } catch (e) {
-      print('Error checking email existence: $e');
+    //  print('Error checking email existence: $e');
       return false;
     }
   }
@@ -115,16 +115,16 @@ class UserProvider with ChangeNotifier {
       await _firestore.collection('users').doc(newUser.email).set(newUser.toJson());
       _user = newUser;
       notifyListeners();
-      print('User signed up successfully: ${newUser.email}');
+   //   print('User signed up successfully: ${newUser.email}');
     } catch (e) {
-      print('Error signing up: $e');
+    //  print('Error signing up: $e');
       throw e;
     }
   }
 
   Future<bool> signIn(String email, String password) async {
     try {
-      print('Signing in with email: $email');
+     // print('Signing in with email: $email');
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
       DocumentSnapshot userDoc = await _firestore.collection('users').doc(email).get();
       if (userDoc.exists) {
@@ -135,13 +135,13 @@ class UserProvider with ChangeNotifier {
         _user.history = historyJson.map((e) => HistoryEntry.fromJson(e as Map<String, dynamic>)).toList();
 
         notifyListeners();
-        print('User signed in successfully: $email');
+      //  print('User signed in successfully: $email');
         return true;
       } else {
-        print('User document not found for email: $email');
+      //  print('User document not found for email: $email');
       }
     } catch (e) {
-      print('Error signing in: $e');
+   //   print('Error signing in: $e');
     }
     return false;
   }
@@ -151,9 +151,9 @@ class UserProvider with ChangeNotifier {
       _user.name = newName;
       await _firestore.collection('users').doc(_user.email).update({'name': newName});
       notifyListeners();
-      print('Name updated successfully to: $newName');
+  //    print('Name updated successfully to: $newName');
     } catch (e) {
-      print('Error updating name: $e');
+     // print('Error updating name: $e');
     }
   }
 
@@ -164,12 +164,12 @@ class UserProvider with ChangeNotifier {
         await currentUser.updatePassword(newPassword);
         await _firestore.collection('users').doc(_user.email).update({'password': newPassword});
         notifyListeners();
-        print('Password updated successfully');
+     //   print('Password updated successfully');
       } else {
         throw Exception("No user is currently signed in.");
       }
     } catch (e) {
-      print('Error updating password: $e');
+  //    print('Error updating password: $e');
     }
   }
 
@@ -179,7 +179,7 @@ class UserProvider with ChangeNotifier {
         throw Exception("User is not signed in.");
       }
 
-      print('Updating subscription for user: ${_user.email}');
+     // print('Updating subscription for user: ${_user.email}');
       _user.subscriptionType = subscriptionType;
       _user.timeFrames = timeFrames;
       _user.subscriptionEndDate = DateTime.now().add(Duration(days: 30));
@@ -187,18 +187,18 @@ class UserProvider with ChangeNotifier {
       _user.isCanceled = false;
 
       DocumentReference userDocRef = _firestore.collection('users').doc(_user.email);
-      print('Document reference path: ${userDocRef.path}');
+  //    print('Document reference path: ${userDocRef.path}');
 
       DocumentSnapshot userDoc = await userDocRef.get();
       if (userDoc.exists) {
         await userDocRef.update(_user.toJson());
         notifyListeners();
-        print('Subscription updated successfully');
+   //     print('Subscription updated successfully');
       } else {
         throw Exception('User document does not exist.');
       }
     } catch (e) {
-      print('Error updating subscription: $e');
+ //     print('Error updating subscription: $e');
       throw e;
     }
   }
@@ -210,9 +210,9 @@ class UserProvider with ChangeNotifier {
         'history': FieldValue.arrayUnion([entry.toJson()]),
       });
       notifyListeners();
-      print('History entry added successfully');
+   //   print('History entry added successfully');
     } catch (e) {
-      print('Error adding history entry: $e');
+ //     print('Error adding history entry: $e');
     }
   }
 
@@ -223,9 +223,9 @@ class UserProvider with ChangeNotifier {
         'history': _user.history.map((e) => e.toJson()).toList(),
       });
       notifyListeners();
-      print('History entry result updated successfully');
+  //    print('History entry result updated successfully');
     } catch (e) {
-      print('Error updating history entry result: $e');
+  //    print('Error updating history entry result: $e');
     }
   }
 
@@ -240,12 +240,12 @@ class UserProvider with ChangeNotifier {
       if (userDoc.exists) {
         await userDocRef.update(_user.toJson());
         notifyListeners();
-        print('Subscription canceled successfully');
+    //    print('Subscription canceled successfully');
       } else {
         throw Exception('User document does not exist.');
       }
     } catch (e) {
-      print('Error canceling subscription: $e');
+ //     print('Error canceling subscription: $e');
     }
   }
 
@@ -283,10 +283,10 @@ class UserProvider with ChangeNotifier {
           MaterialPageRoute(builder: (context) => SignInScreen()),
               (Route<dynamic> route) => false,
         );
-        print('Account deleted successfully');
+   //     print('Account deleted successfully');
       }
     } catch (e) {
-      print('Error deleting account: $e');
+   //   print('Error deleting account: $e');
     }
   }
 
@@ -301,9 +301,9 @@ class UserProvider with ChangeNotifier {
       for (var item in result.items) {
         await item.delete();
       }
-      print('User files deleted successfully');
+ //     print('User files deleted successfully');
     } catch (e) {
-      print('Error deleting user files: $e');
+ //     print('Error deleting user files: $e');
     }
   }
 
@@ -318,22 +318,22 @@ class UserProvider with ChangeNotifier {
 
       UploadTask uploadTask;
       if (file is Uint8List) {
-        print('Uploading a Uint8List file');
+//        print('Uploading a Uint8List file');
         uploadTask = storageRef.putData(file);
       } else if (file is File) {
-        print('Uploading a File');
+ //       print('Uploading a File');
         uploadTask = storageRef.putFile(file);
       } else {
-        print('Unsupported file type: ${file.runtimeType}');
+ //       print('Unsupported file type: ${file.runtimeType}');
         throw Exception('Unsupported file type');
       }
 
       final snapshot = await uploadTask.whenComplete(() {});
       String downloadUrl = await snapshot.ref.getDownloadURL();
-      print('Image uploaded successfully, download URL: $downloadUrl');
+  //    print('Image uploaded successfully, download URL: $downloadUrl');
       return downloadUrl;
     } catch (e) {
-      print('Failed to upload image: $e');
+  //    print('Failed to upload image: $e');
       return '';
     }
   }
@@ -345,9 +345,9 @@ class UserProvider with ChangeNotifier {
         'history': _user.history.map((e) => e.toJson()).toList(),
       });
       notifyListeners();
-      print('History entry name updated successfully');
+  //    print('History entry name updated successfully');
     } catch (e) {
-      print('Error updating history entry name: $e');
+  //    print('Error updating history entry name: $e');
     }
   }
 
@@ -358,9 +358,9 @@ class UserProvider with ChangeNotifier {
         'history': _user.history.map((e) => e.toJson()).toList(),
       });
       notifyListeners();
-      print('History entry deleted successfully');
+   //   print('History entry deleted successfully');
     } catch (e) {
-      print('Error deleting history entry: $e');
+  //    print('Error deleting history entry: $e');
     }
   }
 
@@ -371,9 +371,9 @@ class UserProvider with ChangeNotifier {
         'history': [],
       });
       notifyListeners();
-      print('History cleared successfully');
+  //    print('History cleared successfully');
     } catch (e) {
-      print('Error clearing history: $e');
+ ///     print('Error clearing history: $e');
     }
   }
 
@@ -405,9 +405,9 @@ class UserProvider with ChangeNotifier {
         MaterialPageRoute(builder: (context) => SignInScreen()),
             (Route<dynamic> route) => false,
       );
-      print('Logged out successfully');
+ //     print('Logged out successfully');
     } catch (e) {
-      print('Error logging out: $e');
+  //    print('Error logging out: $e');
     }
   }
 
