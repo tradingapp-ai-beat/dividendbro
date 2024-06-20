@@ -3,7 +3,8 @@ name: Build and Deploy Static Web App
 on:
   push:
     branches:
-      - main
+      - main  # Change this to the branch you want to trigger the workflow
+      - image-handling  # Include any other branches you want to trigger the workflow
 
 jobs:
   build_and_deploy_job:
@@ -11,6 +12,8 @@ jobs:
     steps:
       - name: Checkout GitHub Action
         uses: actions/checkout@v2
+        with:
+          ref: image-handling  # Ensure this is the correct branch you want to deploy
 
       - name: Setup Node.js
         uses: actions/setup-node@v2
