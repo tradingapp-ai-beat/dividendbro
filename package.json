@@ -1,4 +1,9 @@
 {
+  "name": "flutter-app",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "flutter build web"
+  },
   "dependencies": {
     "nodemailer": "^6.9.13",
     "openai": "^4.0.0"
