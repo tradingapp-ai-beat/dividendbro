@@ -37,4 +37,4 @@ jobs:
 
     - name: Create Azure Static Web App
       run: |
-        az staticwebapp create --name dividendbeat1 --resource-group beta_test_group --sku FREE --location centralus --source https://github.com/tradingapp-ai-beat/dividendbro --app-location / --output-location build/web --branch image-handling --token ${{ secrets.GITHUB_TOKEN }}
+        az staticwebapp create --name dividendbeat1 --resource-group beta_test_group --sku FREE --location centralus --source https://github.com/tradingapp-ai-beat/dividendbro --app-location / --output-location build/web --branch image-handling --token ${{ secrets.GH_PAT }}
