@@ -37,4 +37,4 @@ jobs:
 
     - name: Deploy to Azure Static Web Apps
       run: |
-        az webapp up --name dividendbeat --resource-group beta_test_group --sku FREE --location centralus --html
+        az staticwebapp up --name dividendbeat --resource-group beta_test_group --sku FREE --location centralus --html
