@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:trading_advice_app_v2/screens/welcome_screen.dart';
 import 'provider/user_provider.dart';
@@ -12,6 +13,16 @@ import 'services/email_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: "assets/.env");
+
+  print('API Key: ${dotenv.env['FIREBASE_API_KEY']}');
+  print('API Key: ${dotenv.env['FIREBASE_API_KEY_ANDROID']}');
+  print('App ID: ${dotenv.env['FIREBASE_APP_ID']}');
+  print('Messaging Sender ID: ${dotenv.env['FIREBASE_MESSAGING_SENDER_ID']}');
+  print('Project ID: ${dotenv.env['FIREBASE_PROJECT_ID']}');
+  print('Auth Domain: ${dotenv.env['FIREBASE_AUTH_DOMAIN']}');
+  print('Storage Bucket: ${dotenv.env['FIREBASE_STORAGE_BUCKET']}');
+  print('Measurement ID: ${dotenv.env['FIREBASE_MEASUREMENT_ID']}');
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

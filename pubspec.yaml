@@ -36,6 +36,7 @@ dependencies:
   email_auth: ^2.0.0
   mailer: ^6.1.0
   flutter_secure_storage: ^5.0.2
+  flutter_dotenv: ^5.0.2
 
 dev_dependencies:
   flutter_test:
@@ -59,6 +60,7 @@ flutter:
     - assets/5m_boxes5.png
     - assets/m30_boxes4.png
     #- assets/mm_boxes3.png
+    - assets/.env
 
 fonts:
   - family: Roboto
