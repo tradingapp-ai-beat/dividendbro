@@ -8,10 +8,12 @@ import 'screens/image_selection_screen.dart';
 import 'screens/subscription_screen.dart';
 import 'firebase_options.dart'; // Make sure this file is generated and included in your project
 import 'services/email_service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: "assets/.env");
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
