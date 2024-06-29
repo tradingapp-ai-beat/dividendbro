@@ -94,7 +94,7 @@ class PlanScreen extends StatelessWidget {
             ),
             SizedBox(height: 16),
             Text(
-              'Beats Time Frames:',
+              'Time Frames:',
               style: TextStyle(
                 fontFamily: 'RobotoMono',
                 fontSize: 18,
@@ -193,7 +193,7 @@ class PlanScreen extends StatelessWidget {
       case 0:
         return 'Free-trial Subscription';
       case 1:
-        return '1 Beat Time Frame';
+        return 'Premium Plan';
       case 2:
         return '2 Beats Time Frames';
       case 3:

@@ -9,33 +9,22 @@ class SubscriptionScreen extends StatefulWidget {
 }
 
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
-  int? _selectedSubscriptionType;
-  List<String> _selectedTimeFrames = [];
+  int _selectedSubscriptionType = 1; // Default to Beat 1 which includes all features.
 
   Future<void> _subscribe() async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
-    if (_selectedSubscriptionType == null) {
-      _showErrorDialog("Please select a subscription plan.");
-      return;
-    }
-
-    if ((_selectedSubscriptionType == 1 && _selectedTimeFrames.length != 1) ||
-        (_selectedSubscriptionType == 2 && _selectedTimeFrames.length != 2) ||
-        (_selectedSubscriptionType == 3 && _selectedTimeFrames.length != 5)) {
-      _showErrorDialog("Please select the correct number of time frames.");
-      return;
-    }
+    // Automatically assign all timeframes
+    List<String> selectedTimeFrames = ['minutes', 'hours', 'days', 'weeks', 'months'];
 
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => PaymentScreen2(
-          subscriptionType: _selectedSubscriptionType!,
-          timeFrames: _selectedTimeFrames,
+          subscriptionType: _selectedSubscriptionType,
+          timeFrames: selectedTimeFrames,
           email: userProvider.user.email,
           name: userProvider.user.name,
-          password: null, // No need to pass password for subscription update
           previousScreen: 'subscription',
         ),
       ),
@@ -62,108 +51,31 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     );
   }
 
-  Widget _buildSubscriptionOptions() {
-    return Column(
-      children: [
-        _buildSubscriptionCard(
-          title: 'Beat 1',
-          price: '14.99€ / month',
-          description: 'Choose 1 Beat time frame',
-          subscriptionType: 1,
-          maxSelections: 1,
-        ),
-        _buildSubscriptionCard(
-          title: 'Beat 2',
-          price: '24.99€ / month',
-          description: 'Choose 2 Beats time frames',
-          subscriptionType: 2,
-          maxSelections: 2,
-        ),
-        _buildSubscriptionCard(
-          title: 'Beat 3',
-          price: '49.99€ / month',
-          description: 'All Beats time frames',
-          subscriptionType: 3,
-          maxSelections: 5,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSubscriptionCard({
-    required String title,
-    required String price,
-    required String description,
-    required int subscriptionType,
-    required int maxSelections,
-  }) {
+  Widget _buildSubscriptionCard() {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       elevation: 4.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
-      child: ExpansionTile(
+      child: ListTile(
         title: Text(
-          title,
+          'Premium Plan',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(price, style: TextStyle(color: Colors.green)),
-            Text(description, style: TextStyle(fontSize: 14.0)),
+            Text('14.99€ / month', style: TextStyle(color: Colors.green)),
+            Text('All time frames included for unlimited AI analysis.', style: TextStyle(fontSize: 14.0)),
           ],
         ),
-        onExpansionChanged: (bool expanded) {
-          if (expanded && _selectedSubscriptionType != subscriptionType) {
-            setState(() {
-              _selectedSubscriptionType = subscriptionType;
-              _selectedTimeFrames = [];
-            });
-          }
-        },
-        children: [
-          ListTile(
-            title: Text(description),
-            trailing: Radio<int>(
-              value: subscriptionType,
-              groupValue: _selectedSubscriptionType,
-              onChanged: (int? value) {
-                setState(() {
-                  _selectedSubscriptionType = value!;
-                  _selectedTimeFrames = [];
-                });
-              },
-            ),
-          ),
-          if (_selectedSubscriptionType == subscriptionType)
-            _buildTimeFrameSelector(maxSelections),
-        ],
+        trailing: Radio<int>(
+          value: 1,
+          groupValue: _selectedSubscriptionType,
+          onChanged: null,  // Make the radio button non-interactive
+        ),
       ),
-    );
-  }
-
-  Widget _buildTimeFrameSelector(int maxSelections) {
-    final timeFrames = ['minutes', 'hours', 'days', 'weeks', 'months'];
-    return Column(
-      children: timeFrames.map((timeFrame) {
-        return CheckboxListTile(
-          title: Text(timeFrame),
-          value: _selectedTimeFrames.contains(timeFrame),
-          onChanged: (bool? value) {
-            if (value == true && _selectedTimeFrames.length < maxSelections) {
-              setState(() {
-                _selectedTimeFrames.add(timeFrame);
-              });
-            } else if (value == false) {
-              setState(() {
-                _selectedTimeFrames.remove(timeFrame);
-              });
-            }
-          },
-        );
-      }).toList(),
     );
   }
 
@@ -189,7 +101,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 10),
-                    _buildSubscriptionOptions(),
+                    _buildSubscriptionCard(),
                     SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: _subscribe,
