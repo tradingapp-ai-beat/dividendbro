@@ -46,4 +46,3 @@ jobs:
           app_location: 'build/web'
           output_location: ''
           skip_app_build: true
-          location: 'westeurope'  ## Specify the European region here##
