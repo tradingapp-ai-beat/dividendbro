@@ -28,13 +28,15 @@
   <script>
     // Your web app's Firebase configuration
     var firebaseConfig = {
-      apiKey: 'AIzaSyBpwQJviBmElIFldLP41mbCeByf-_ZRdFE',
-      appId: '1:546409712378:web:71cf517c293ed7d0ad1743',
-      messagingSenderId: '546409712378',
-      projectId: 'dividendbeat',
-      authDomain: 'dividendbeat.firebaseapp.com',
-      storageBucket: 'dividendbeat.appspot.com',
-      measurementId: 'G-M2PF1SD3HB'
+
+      apiKey: dotenv.env['FIREBASE_API_KEY']!,
+
+      appId: dotenv.env['FIREBASE_APP_ID']!,
+      messagingSenderId: dotenv.env['FIREBASE_MESSAGING_SENDER_ID']!,
+      projectId: dotenv.env['FIREBASE_PROJECT_ID']!,
+      authDomain: dotenv.env['FIREBASE_AUTH_DOMAIN']!,
+      storageBucket: dotenv.env['FIREBASE_STORAGE_BUCKET']!,
+      measurementId: dotenv.env['FIREBASE_MEASUREMENT_ID']!,
     };
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
@@ -42,6 +44,15 @@
 
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
+
+  <script>
+  if (window.localStorage) {
+    localStorage.clear();
+  }
+  if (window.sessionStorage) {
+    sessionStorage.clear();
+  }
+</script>
 </head>
 <body>
 <script>

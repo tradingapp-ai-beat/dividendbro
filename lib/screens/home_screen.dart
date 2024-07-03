@@ -60,7 +60,7 @@ class HomeScreen extends StatelessWidget {
               onPressed: () {
                 //userProvider.printAllUsers(); // Print all users on button press
               },
-              child: Text('Print All Users'),
+              child: Text('Users'),
             ),
           ],
         ),

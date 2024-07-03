@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../services/network_service.dart';
+
 import '../provider/user_provider.dart';
-import 'questions_screen.dart'; // Import the QuestionsScreen
+import '../services/network_service.dart';
+import 'questions_screen.dart';
 import 'sign_up_screen.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -18,17 +19,20 @@ class _SignInScreenState extends State<SignInScreen> {
     String email = _emailController.text;
     String password = _passwordController.text;
 
-    bool success = await Provider.of<UserProvider>(context, listen: false).signIn(email, password);
+    bool success = await Provider.of<UserProvider>(context, listen: false)
+        .signIn(email, password);
     if (success) {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
-      Navigator.pushReplacement(
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
           builder: (context) => QuestionsScreen(
             subscribedTimeFrames: userProvider.user.timeFrames ?? [],
             name: userProvider.user.name ?? '',
+            previousScreen: '',
           ),
         ),
+        (Route<dynamic> route) => false,
       );
     } else {
       _showErrorDialog("Sign-in failed");
@@ -40,13 +44,14 @@ class _SignInScreenState extends State<SignInScreen> {
       await sendPasswordResetEmail(email);
       _showSuccessDialog('Password reset email sent successfully');
     } else {
-      print('Email is required');
+      //print('Email is required');
       _showErrorDialog('Email is required');
     }
   }
 
   void _showForgotPasswordDialog() {
-    final TextEditingController _forgotPasswordEmailController = TextEditingController();
+    final TextEditingController _forgotPasswordEmailController =
+        TextEditingController();
 
     showDialog(
       context: context,
@@ -73,7 +78,8 @@ class _SignInScreenState extends State<SignInScreen> {
               child: Text("OK"),
               onPressed: () async {
                 Navigator.of(context).pop();
-                await _sendPasswordResetEmail(_forgotPasswordEmailController.text.trim());
+                await _sendPasswordResetEmail(
+                    _forgotPasswordEmailController.text.trim());
               },
             ),
           ],
@@ -147,7 +153,8 @@ class _SignInScreenState extends State<SignInScreen> {
                     SizedBox(height: 20),
                     Text(
                       'dividendBeat AI is on the House!',
-                      style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 24.0, fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 10),
@@ -181,7 +188,8 @@ class _SignInScreenState extends State<SignInScreen> {
                     ElevatedButton(
                       onPressed: _signIn,
                       style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 15.0),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 50.0, vertical: 15.0),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
@@ -199,7 +207,8 @@ class _SignInScreenState extends State<SignInScreen> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => SignUpScreen()),
+                          MaterialPageRoute(
+                              builder: (context) => SignUpScreen()),
                         );
                       },
                       child: Text('Don\'t have an account? Sign Up'),

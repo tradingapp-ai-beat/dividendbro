@@ -97,16 +97,16 @@ class _ChoosePlanScreenState extends State<ChoosePlanScreen> {
         _buildSubscriptionCard(
           title: 'Beat 2',
           price: '19.99€ / month',
-          description: 'Choose 3 Beats time frames',
+          description: 'Choose 2 Beats time frames',
           subscriptionType: 2,
-          maxSelections: 3,
+          maxSelections: 2,
         ),
         _buildSubscriptionCard(
           title: 'Beat 3',
           price: '49.99€ / month',
-          description: 'Unlimited Beats time frames',
+          description: 'All Beats time frames',
           subscriptionType: 3,
-          maxSelections: 8,
+          maxSelections: 5,
         ),
       ],
     );
@@ -161,7 +161,7 @@ class _ChoosePlanScreenState extends State<ChoosePlanScreen> {
   }
 
   Widget _buildTimeFrameSelector(int maxSelections) {
-    final timeFrames = ['1m', '5m', '15m', '30m', '1h', '4h', '1d', '1w'];
+    final timeFrames = ['1m', '5m', '15m', '30m', '1h', '4h', '1d', '1w', 'M'];
     return Column(
       children: timeFrames.map((timeFrame) {
         return CheckboxListTile(

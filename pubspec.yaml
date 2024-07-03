@@ -31,10 +31,17 @@ dependencies:
   firebase_storage: ^12.0.0
   image: ^3.0.1
   flutter_image_compress: ^1.1.1
+  auto_size_text: ^3.0.0
+  photo_view: ^0.15.0
+  email_auth: ^2.0.0
+  mailer: ^6.1.0
+  flutter_secure_storage: ^5.0.2
+  flutter_dotenv: ^5.0.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  build_runner: ^2.0.0
 
 
 flutter:
@@ -42,6 +49,19 @@ flutter:
   assets:
     - assets/logo.png
     - assets/beat.svg
+    - assets/mobile1.png
+    - assets/mobile2.png
+    - assets/web1.png
+    - assets/web2.png
+    - assets/mobile_1.png
+    - assets/mobile_2.png
+    - assets/mobile_3.png
+    - assets/1m_boxes2.png
+    - assets/2h_boxes1.png
+    - assets/5m_boxes5.png
+    - assets/m30_boxes4.png
+    #- assets/mm_boxes3.png
+    - assets/.env
 
 fonts:
   - family: Roboto

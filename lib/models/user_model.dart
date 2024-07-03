@@ -9,6 +9,7 @@ class HistoryEntry {
   Uint8List? imageBytes;
   int rating;
   String title;
+  bool isWin;
 
   HistoryEntry({
     required this.imagePath,
@@ -18,6 +19,7 @@ class HistoryEntry {
     this.imageBytes,
     this.rating = 0,
     this.title = '',
+    this.isWin = false,
   });
 
   Map<String, dynamic> toJson() {
@@ -28,6 +30,7 @@ class HistoryEntry {
       'imageUrl': imageUrl,
       'imageBytes': imageBytes != null ? base64Encode(imageBytes!) : null,
       'rating': rating,
+      'isWin': isWin,
       'title': title,
     };
   }
@@ -40,6 +43,7 @@ class HistoryEntry {
       imageUrl: json['imageUrl'],
       imageBytes: json['imageBytes'] != null ? base64Decode(json['imageBytes']) : null,
       rating: json['rating'],
+      isWin: json['isWin'],
       title: json['title'], // Parse title from JSON
     );
   }
@@ -51,11 +55,14 @@ class UserModel {
   List<String> timeFrames;
   List<HistoryEntry> history;
   bool isFreeTrial;
-  bool isPaidSubscription; // New field
+  bool isPaidSubscription;
   DateTime signupDate;
   DateTime? cancellationDate;
   bool isCanceled;
   String uid;
+  DateTime subscriptionEndDate;
+  String password;
+  DateTime paymentDate;
 
   UserModel({
     required this.email,
@@ -68,10 +75,12 @@ class UserModel {
     this.cancellationDate,
     this.isCanceled = false,
     required this.uid,
-    this.isPaidSubscription = false, // Initialize with default value
+    required this.subscriptionEndDate,
+    this.isPaidSubscription = false,
+    required this.password,
+    required this.paymentDate,
   });
 
-  // Update the toJson and fromJson methods to include isPaidSubscription
   Map<String, dynamic> toJson() {
     return {
       'email': email,
@@ -80,11 +89,14 @@ class UserModel {
       'timeFrames': timeFrames,
       'history': history.map((e) => e.toJson()).toList(),
       'isFreeTrial': isFreeTrial,
-      'isPaidSubscription': isPaidSubscription, // Include in JSON
+      'isPaidSubscription': isPaidSubscription,
       'signupDate': signupDate.toIso8601String(),
       'cancellationDate': cancellationDate?.toIso8601String(),
       'isCanceled': isCanceled,
       'uid': uid,
+      'subscriptionEndDate': subscriptionEndDate.toIso8601String(),
+      'password': password,
+      'paymentDate': paymentDate.toIso8601String(),
     };
   }
 
@@ -96,11 +108,14 @@ class UserModel {
       timeFrames: List<String>.from(json['timeFrames']),
       history: (json['history'] as List).map((e) => HistoryEntry.fromJson(e)).toList(),
       isFreeTrial: json['isFreeTrial'],
-      isPaidSubscription: json['isPaidSubscription'] ?? false, // Read from JSON
+      isPaidSubscription: json['isPaidSubscription'] ?? false,
       signupDate: DateTime.parse(json['signupDate']),
       cancellationDate: json['cancellationDate'] != null ? DateTime.parse(json['cancellationDate']) : null,
       isCanceled: json['isCanceled'],
       uid: json['uid'],
+      subscriptionEndDate: DateTime.parse(json['subscriptionEndDate']),
+      password: json['password'],
+      paymentDate: DateTime.parse(json['paymentDate']),
     );
   }
 }

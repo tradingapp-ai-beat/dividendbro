@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/user_model.dart';
 import '../provider/user_provider.dart';
-import 'payment_screen.dart';
+import 'payment_screen2.dart';
 
 class SubscriptionScreen extends StatefulWidget {
   @override
@@ -10,36 +9,37 @@ class SubscriptionScreen extends StatefulWidget {
 }
 
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
-  int _selectedSubscriptionType = 0;
+  int? _selectedSubscriptionType;
   List<String> _selectedTimeFrames = [];
 
   Future<void> _subscribe() async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    try {
-      // Update the user's subscription details
-      await userProvider.updateSubscription(_selectedSubscriptionType, _selectedTimeFrames);
-      print("Subscription updated successfully.");
 
-      // Navigate to the payment screen if a paid plan is selected
-      if (_selectedSubscriptionType != 0) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PaymentScreen(
-              subscriptionType: _selectedSubscriptionType,
-              timeFrames: _selectedTimeFrames,
-              email: userProvider.user.email,
-              name: userProvider.user.name,
-            ),
-          ),
-        );
-      } else {
-        Navigator.pop(context); // Just go back if no paid plan is selected
-      }
-    } catch (e) {
-      print("Error during subscription: $e");
-      _showErrorDialog(e.toString());
+    if (_selectedSubscriptionType == null) {
+      _showErrorDialog("Please select a subscription plan.");
+      return;
     }
+
+    if ((_selectedSubscriptionType == 1 && _selectedTimeFrames.length != 1) ||
+        (_selectedSubscriptionType == 2 && _selectedTimeFrames.length != 2) ||
+        (_selectedSubscriptionType == 3 && _selectedTimeFrames.length != 5)) {
+      _showErrorDialog("Please select the correct number of time frames.");
+      return;
+    }
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PaymentScreen2(
+          subscriptionType: _selectedSubscriptionType!,
+          timeFrames: _selectedTimeFrames,
+          email: userProvider.user.email,
+          name: userProvider.user.name,
+          password: null, // No need to pass password for subscription update
+          previousScreen: 'subscription',
+        ),
+      ),
+    );
   }
 
   void _showErrorDialog(String message) {
@@ -67,24 +67,24 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       children: [
         _buildSubscriptionCard(
           title: 'Beat 1',
-          price: '9.99€ / month',
+          price: '14.99€ / month',
           description: 'Choose 1 Beat time frame',
           subscriptionType: 1,
           maxSelections: 1,
         ),
         _buildSubscriptionCard(
           title: 'Beat 2',
-          price: '19.99€ / month',
-          description: 'Choose 3 Beats time frames',
+          price: '24.99€ / month',
+          description: 'Choose 2 Beats time frames',
           subscriptionType: 2,
-          maxSelections: 3,
+          maxSelections: 2,
         ),
         _buildSubscriptionCard(
           title: 'Beat 3',
           price: '49.99€ / month',
-          description: 'Unlimited Beats time frames',
+          description: 'All Beats time frames',
           subscriptionType: 3,
-          maxSelections: 8,
+          maxSelections: 5,
         ),
       ],
     );
@@ -145,7 +145,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Widget _buildTimeFrameSelector(int maxSelections) {
-    final timeFrames = ['1m', '5m', '15m', '30m', '1h', '4h', '1d', '1w'];
+    final timeFrames = ['minutes', 'hours', 'days', 'weeks', 'months'];
     return Column(
       children: timeFrames.map((timeFrame) {
         return CheckboxListTile(
@@ -173,16 +173,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       appBar: AppBar(
         title: Text('Select a Plan'),
         automaticallyImplyLeading: false, // Hide the back arrow
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context); // Navigate back to the previous screen
-          },
-        ),
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          bool isMobile = constraints.maxWidth < 600;
           return SingleChildScrollView(
             padding: EdgeInsets.all(16.0),
             child: Center(

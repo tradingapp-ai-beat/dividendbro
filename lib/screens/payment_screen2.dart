@@ -6,20 +6,20 @@ import '../models/user_model.dart';
 import '../provider/user_provider.dart';
 import 'image_selection_screen.dart';
 
-class PaymentScreen extends StatelessWidget {
+class PaymentScreen2 extends StatelessWidget {
   final int subscriptionType;
   final List<String> timeFrames;
   final String email;
   final String name;
-  final String? password; // Add password field for sign-up
-  final String previousScreen; // Indicate the previous screen
+  final String? password;
+  final String previousScreen;
 
-  PaymentScreen({
+  PaymentScreen2({
     required this.subscriptionType,
     required this.timeFrames,
     required this.email,
     required this.name,
-    this.password, // Make password optional
+    this.password,
     required this.previousScreen,
   });
 
@@ -29,7 +29,7 @@ class PaymentScreen extends StatelessWidget {
     if (password != null) {
       // Sign up process
       try {
-        UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: email,
           password: password!,
         );
@@ -52,11 +52,11 @@ class PaymentScreen extends StatelessWidget {
           cancellationDate: null,
           subscriptionEndDate: DateTime.now().add(Duration(days: 30)),
           password: password!,
-          paymentDate: DateTime.now(), // Set the end date for the subscription
+          paymentDate: DateTime.now(),
         );
 
         await userProvider.signUp(newUser);
-        //print("User signed up and data saved to Firestore.");
+      //  print("User signed up and data saved to Firestore.");
 
         Navigator.pushReplacement(
           context,
@@ -68,26 +68,27 @@ class PaymentScreen extends StatelessWidget {
           ),
         );
       } catch (e) {
-        //print("Error during sign-up: $e");
+    //    print("Error during sign-up: $e");
         _showErrorDialog(context, e.toString());
       }
     } else {
       // Subscription update process
       try {
         await userProvider.updateSubscription(subscriptionType, timeFrames);
-        //print("Subscription updated successfully.");
+   //     print("Subscription updated successfully.");
 
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => QuestionsScreen(
               subscribedTimeFrames: timeFrames,
-              name: name, previousScreen: '',
+              name: name,
+              previousScreen: '',
             ),
           ),
         );
       } catch (e) {
-       // print("Error during subscription update: $e");
+ //       print("Error during subscription update: $e");
         _showErrorDialog(context, e.toString());
       }
     }
@@ -121,7 +122,7 @@ class PaymentScreen extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context); // Go back to the previous screen
+            Navigator.pop(context);
           },
         ),
       ),

@@ -77,7 +77,7 @@ class PlanScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Your DividendBeat Plan:',
+              'Your dividendBeat Plan:',
               style: TextStyle(
                 fontFamily: 'RobotoMono',
                 fontSize: 18,
@@ -122,7 +122,7 @@ class PlanScreen extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.all(16.0),
         child: Text(
-          'Your plan was canceled and will be active until ${userProvider.user.cancellationDate!.add(Duration(days: 1)).toLocal().toString().split(' ')[0]}',
+          'Your subscription plan was canceled but you will have access to all the features until ${userProvider.user.subscriptionEndDate!.toLocal().toString().split(' ')[0]}',
           style: TextStyle(
             fontFamily: 'RobotoMono',
             fontSize: 16,
@@ -159,7 +159,7 @@ class PlanScreen extends StatelessWidget {
         }
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blue.shade50,
+        backgroundColor: Colors.black54,
         padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 15.0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         textStyle: TextStyle(fontFamily: 'RobotoMono', fontSize: 16),
@@ -195,7 +195,7 @@ class PlanScreen extends StatelessWidget {
       case 1:
         return '1 Beat Time Frame';
       case 2:
-        return '3 Beats Time Frames';
+        return '2 Beats Time Frames';
       case 3:
         return 'Unlimited Beats Time Frames';
       default:
