@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String apiKey = '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';
+  static const String apiKey = 'xxxxxxxx';
   static const String apiUrl = 'https://api.openai.com/v1/chat/completions';
 
   static Future<Map<String, String>> analyzeImageFromUrl(String imageUrl) async {
