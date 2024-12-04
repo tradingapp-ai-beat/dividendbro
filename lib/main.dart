@@ -6,7 +6,7 @@ import 'provider/user_provider.dart';
 import 'screens/auth_screen.dart';
 import 'screens/image_selection_screen.dart';
 import 'screens/subscription_screen.dart';
-import 'firebase_options.dart'; // Make sure this file is generated and included in your project
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
