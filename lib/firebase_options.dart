@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDU4T8qnevhGPd1qCpGP4qeq33Zcfu25Y8',
+    apiKey: 'xxxxxxxx',
     appId: '1:546409712378:android:74ab0f8a229f9ceaad1743',
     messagingSenderId: '546409712378',
     projectId: 'dividendbeat',
@@ -59,7 +59,7 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDbp3nDadVp5in_rrY4BgOT-rq3YRLvk-s',
+    apiKey: 'xxxxxxxxx',
     appId: '1:546409712378:ios:ac19a05e2f6c04d9ad1743',
     messagingSenderId: '546409712378',
     projectId: 'dividendbeat',
@@ -68,7 +68,7 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDbp3nDadVp5in_rrY4BgOT-rq3YRLvk-s',
+    apiKey: 'xxxxxxxxx',
     appId: '1:546409712378:ios:ac19a05e2f6c04d9ad1743',
     messagingSenderId: '546409712378',
     projectId: 'dividendbeat',
@@ -77,7 +77,7 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyBpwQJviBmElIFldLP41mbCeByf-_ZRdFE',
+    apiKey: 'xxxxxxx',
     appId: '1:546409712378:web:5b850f1cdad88604ad1743',
     messagingSenderId: '546409712378',
     projectId: 'dividendbeat',
